@@ -20,10 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import prj.edu.bytta.SecondActivity
+import prj.edu.bytta.HomeActivity
 import prj.edu.bytta.R
-
-
 
 @Preview
 @Composable
@@ -107,7 +105,7 @@ fun SignInButton() {
     val context = LocalContext.current
     Button(
         onClick = {
-            val intent = Intent(context, SecondActivity::class.java)
+            val intent = Intent(context, HomeActivity::class.java)
             context.startActivity(intent)
             Toast.makeText(context, "Velkommen", Toast.LENGTH_SHORT).show()
         },
