@@ -17,7 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import prj.edu.bytta.Trade
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,19 +66,7 @@ fun Content() {
         Column(modifier = Modifier.padding(paddingValues)) {
             TradeCard(Trade("Morten", "Basskasse LOLZ", "Prøver å bytte en basskasse shamener. Ønsker ikke noe spesifikt bare kom med tilbud \uD83D\uDE1C"))
             TradeCard(Trade("Petter Northug", "Ski", "Selger skiene mine :=)"))
-
-        /*Card(
-            onClick = {/*TODO*/},
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(text = "Test", Modifier.align(Alignment.Center))
-            }
-        }*/
-    }
-
+        }
     }
 }
 
