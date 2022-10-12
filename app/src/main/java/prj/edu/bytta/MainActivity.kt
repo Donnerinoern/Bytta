@@ -13,12 +13,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import prj.edu.bytta.ui.LoginScreen
 import prj.edu.bytta.ui.theme.ByttaTheme
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             ByttaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -28,7 +26,6 @@ class MainActivity : ComponentActivity() {
                 LoginScreen()
                 }
             }
-
         }
     }
 }
