@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,16 +48,23 @@ fun Content() {
         Icons.Default.Person,
         Icons.Default.Email
         )
+    val intents = listOf(
+        HomeActivity::class.java,
+        MessageActivity::class.java
+    )
     Scaffold(
         bottomBar = {
             BottomAppBar {
                 NavigationBar() {
+                    val context = LocalContext.current
                     items.forEachIndexed { index, item ->
                         NavigationBarItem(
                             icon = {Icon(imageVector = icons[index], contentDescription = items[index])},
                             label = {Text(item)},
                             selected = selectedItem == index,
-                            onClick = { selectedItem = index }
+                            onClick = { selectedItem = index
+                                val intent = Intent(context, intents[index])
+                                context.startActivity(intent)}
                         )
                     }
                 }

@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,7 +99,11 @@ fun SendBtn() {
 
 @Composable
 fun TilbakeBtn() {
-    Button(onClick = { /*TODO*/ }) {
+    val context = LocalContext.current
+    Button(onClick = {
+        val intent = Intent(context, HomeActivity::class.java)
+        context.startActivity(intent)}
+    ) {
         Image(
             painter = painterResource(id = R.drawable.arrow_back),
             contentDescription = "Tilbake til meldinger",
