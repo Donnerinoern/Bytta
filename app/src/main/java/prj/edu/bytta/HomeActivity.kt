@@ -50,6 +50,7 @@ fun Content() {
         )
     val intents = listOf(
         HomeActivity::class.java,
+        ProfileActivity::class.java,
         MessageActivity::class.java
     )
     Scaffold(
