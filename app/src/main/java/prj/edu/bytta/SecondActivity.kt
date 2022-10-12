@@ -14,7 +14,7 @@ import prj.edu.bytta.ui.LoginScreen
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
-class MainActivity : ComponentActivity() {
+class SecondActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -25,14 +25,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                LoginScreen()
+
                 }
             }
 
         }
     }
 }
-/*
+
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
@@ -43,4 +43,5 @@ fun Greeting(name: String) {
 fun DefaultPreview() {
     ByttaTheme {
         Greeting("Android")
-    }*/
+    }
+}
