@@ -78,7 +78,7 @@ fun ProfileScreen(){
             Text(text = "Tilbake",
                  modifier = Modifier.clickable {  })
             Text(
-                text = "Endre profil",
+                text = "Rediger profil",
                 modifier = Modifier.clickable { notification.value = "Profil oppdatert" })
         }
 
@@ -87,6 +87,7 @@ fun ProfileScreen(){
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(start = 4.dp, end = 4.dp),
+
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Brukernavn", modifier = Modifier.width(180.dp) )
@@ -110,17 +111,14 @@ fun ProfileScreen(){
                 )  )
         }
 
+            hola()
+
 
         
 
         val imageUri = rememberSaveable  { mutableStateOf("")}
 
     }
-
-
-
-
-
 
 }
 
@@ -152,6 +150,7 @@ fun ProfileImage(){
 
        Card(
            shape = CircleShape,
+
            modifier = Modifier
                .padding(8.dp)
                .size(100.dp)
@@ -169,6 +168,39 @@ fun ProfileImage(){
     }
 }
 
+@Composable
+fun hola() {
+
+    Column( modifier = Modifier
+
+        .padding(16.dp)
+        .fillMaxWidth()
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(onClick = { /*TODO*/ }
+
+            ) {
+                Text(text = "Ny byttehandel")
+
+            }
+
+            Button(onClick = { /*TODO*/ }
+
+            ) {
+                Text(text = "Dine favoritter")
+
+            }
+
+        }
+
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
