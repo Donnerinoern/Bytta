@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import prj.edu.bytta.ui.LoginScreen
+import prj.edu.bytta.LoginScreen
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 class MainActivity : ComponentActivity() {

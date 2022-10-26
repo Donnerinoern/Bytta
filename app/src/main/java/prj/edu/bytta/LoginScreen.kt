@@ -1,4 +1,4 @@
-package prj.edu.bytta.ui
+package prj.edu.bytta
 
 import android.content.Intent
 import android.widget.Toast
