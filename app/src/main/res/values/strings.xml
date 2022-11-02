@@ -4,4 +4,13 @@
     <string name="password_bg">Passord</string>
     <string name="log_in">Logg Inn</string>
     <string name="sign_up">Lag Bruker</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Logg Inn</string>
+    <string name="password">Passord</string>
+    <string name="email">Email</string>
+    <string name="create">Lag Bruker</string>
+    <string name="sign_in_with_email">Logg Inn Med Email</string>
+    <string name="welcome">Velkommen</string>
+    <string name="sign_in_with_google">Logg Inn Med Google</string>
 </resources>
