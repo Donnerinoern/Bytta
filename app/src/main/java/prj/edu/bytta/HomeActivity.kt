@@ -2,6 +2,7 @@ package prj.edu.bytta
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -19,9 +20,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val db = Firebase.firestore
+        var trade: Trade = Trade("error", "error", "error")
+        db.collection("trades")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    trade = Trade(document.get("user") as String, document.get("item") as String, document.get("body") as String)
+                    println(document.get("user"))
+                }
+            }
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
@@ -31,7 +45,7 @@ class HomeActivity : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content()
+                Content(db, trade)
             }
         }
     }
@@ -39,8 +53,7 @@ class HomeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun Content() {
+fun Content(db: FirebaseFirestore, trade: Trade) {
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Home", "Profile", "Messages")
     val icons = listOf(
@@ -53,6 +66,8 @@ fun Content() {
         ProfileActivity::class.java,
         MessageActivity::class.java
     )
+    db.collection("trades")
+        .get()
     Scaffold(
         bottomBar = {
             BottomAppBar {
@@ -76,6 +91,7 @@ fun Content() {
         Column(modifier = Modifier.padding(paddingValues)) {
             TradeCard(Trade("Morten", "Basskasse LOLZ", "Prøver å bytte en basskasse shamener. Ønsker ikke noe spesifikt bare kom med tilbud \uD83D\uDE1C"))
             TradeCard(Trade("Petter Northug", "Ski", "Selger skiene mine :=)"))
+            TradeCard(trade)
         }
     }
 }
