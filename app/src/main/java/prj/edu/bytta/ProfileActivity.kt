@@ -34,9 +34,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import prj.edu.bytta.StoreUserEmail.Companion.USER_EMAIL_KEY
+
 
 
 class ProfileActivity : ComponentActivity() {
@@ -131,6 +134,10 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
 
     @Composable
     fun UserDetails(context: Context) {
+        val user = Firebase.auth.currentUser
+        val email = user?.email
+
+
         val imageUri = rememberSaveable { mutableStateOf("") }
         val painter = rememberAsyncImagePainter(
             if (imageUri.value.isEmpty())
@@ -185,15 +192,11 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
                       )
 
 
-
                     Spacer(modifier = Modifier.height(2.dp))
 
-                    // User's email
-                    val dataStore = StoreUserEmail(context)
-                    val userEmail = dataStore.getEmail.collectAsState(initial = "")
-                    userEmail.value?.let {
+
                         Text(
-                            text = it,
+                            text = "kea@0599@gmail.com",
                             style = TextStyle(
                                 letterSpacing = (0.8).sp
                             ),
@@ -201,6 +204,7 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
 
                             )
                     }
+
                 }
 
                 val context = LocalContext.current
@@ -222,7 +226,6 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
                 }
             }
         }
-    }
 
 
 
@@ -340,6 +343,7 @@ private fun prepareOptionsData() {
 }
 
 data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String)
+
 
 @Preview(showBackground = true)
 @Composable

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -83,10 +84,12 @@ fun TopAppbarEditProfile(context: Context) {
 fun EditProfilePage(context: Context = LocalContext.current.applicationContext) {
 
     ProfileImage(context = context)
+/*
     // a coroutine scope
     val scope = rememberCoroutineScope()
     // we instantiate the saveEmail class
     val dataStore = StoreUserEmail(context)
+    */
 
     Column(
         modifier = Modifier
@@ -96,7 +99,7 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        var email by rememberSaveable { mutableStateOf("") }
+       // var email by rememberSaveable { mutableStateOf("") }
 /*
         OutlinedTextField(
 
@@ -114,8 +117,8 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
         )
 */
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it
+            value = "",
+            onValueChange = {
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType
@@ -138,18 +141,21 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
         )
 */
         Button(onClick = {
+            Toast.makeText(context, "Endringer lagret!", Toast.LENGTH_SHORT).show()
+            /*
             //launch the class in a coroutine scope
             scope.launch {
                 dataStore.saveEmail(email)
             }
+
+             */
         }
         ) {
             Text(text = "Lagre endringer")
         }
 
-        val userEmail = dataStore.getEmail.collectAsState(initial = "")
-
-        Text(text = userEmail.value!!)
+        //val userEmail = dataStore.getEmail.collectAsState(initial = "")
+        //Text(text = userEmail.value!!)
 
     }
 }

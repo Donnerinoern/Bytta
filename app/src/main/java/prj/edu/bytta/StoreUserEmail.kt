@@ -1,4 +1,4 @@
-package prj.edu.bytta
+/*package prj.edu.bytta
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -32,3 +32,6 @@ class StoreUserEmail(private val context: Context) {
 
 
 }
+
+
+*/
