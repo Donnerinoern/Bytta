@@ -16,12 +16,12 @@
             android:name=".HomeActivity"
             android:exported="true">
 <<<<<<<<< Temporary merge branch 1
-=========
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+=========
 >>>>>>>>> Temporary merge branch 2
             <meta-data
                 android:name="android.app.lib_name"
