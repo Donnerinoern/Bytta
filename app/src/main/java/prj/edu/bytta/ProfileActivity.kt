@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.Preferences
+
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -119,7 +120,8 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
 
             item {
                 // User's image, name, email and edit button
-                UserDetails(context = context)
+                UserDetails( viewModel = LoginViewModel())
+
             }
 
             // Show the options
@@ -133,9 +135,8 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
 }
 
     @Composable
-    fun UserDetails(context: Context) {
+    fun UserDetails( viewModel: LoginViewModel) {
         val user = Firebase.auth.currentUser
-        val email = user?.email
 
 
         val imageUri = rememberSaveable { mutableStateOf("") }
@@ -152,58 +153,64 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
             uri?.let { imageUri.value = it.toString() }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Image(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .size(32.dp),
-
-                painter = painterResource(id = R.drawable.ic_user),
-                contentDescription = "Ditt profilbilde",
 
 
-            )
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
+
+                Image(
                     modifier = Modifier
-                        .weight(weight = 3f, fill = false)
-                        .padding(start = 16.dp)
+                        .wrapContentSize()
+                        .size(32.dp),
 
+                    painter = painterResource(id = R.drawable.ic_user),
+                    contentDescription = "Ditt profilbilde",
+
+
+                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(weight = 3f, fill = false)
+                            .padding(start = 16.dp)
 
-                    // User's name
-                  Text (
-                      text = "Kristian Andersen",
-                      style = TextStyle(
-                          letterSpacing = (0.8).sp
-                      ),
-                      maxLines = 1,
+                    ) {
 
-                      )
-
-
-                    Spacer(modifier = Modifier.height(2.dp))
-
-
+                        // User's name
                         Text(
-                            text = "kea@0599@gmail.com",
+                            text = "Kristian",
                             style = TextStyle(
                                 letterSpacing = (0.8).sp
                             ),
                             maxLines = 1,
 
                             )
-                    }
+
+
+                        Spacer(modifier = Modifier.height(2.dp))
+
+
+                        if (user != null) {
+                            user.email?.let {
+                                Text(
+                                    text = it,
+                                    style = TextStyle(
+                                        letterSpacing = (0.8).sp
+                                    ),
+                                    maxLines = 1,
+
+                                    )
+                            }
+                        }
+
 
                 }
 
@@ -224,6 +231,7 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
+            }
             }
         }
 
@@ -317,7 +325,7 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.ShoppingCart,
             title = "Dine byttehandler",
-            subTitle = ""
+            subTitle = "Se alle dine byttehandler"
         )
     )
 
@@ -326,7 +334,7 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.Settings,
             title = "Innstillinger",
-            subTitle = ""
+            subTitle = "Tilpass dine innstillinger"
 
         )
     )
@@ -337,7 +345,7 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.Star,
             title = "Favoritter",
-            subTitle = ""
+            subTitle = "Se hvilke byttehandler du har likt"
         )
     )
 }

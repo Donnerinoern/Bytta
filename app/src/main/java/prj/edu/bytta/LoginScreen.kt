@@ -1,65 +1,96 @@
-package prj.edu.bytta.ui
+package prj.edu.bytta
 
+import android.content.ContentValues.TAG
 import android.content.Intent
-import android.widget.Toast
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import prj.edu.bytta.HomeActivity
-import prj.edu.bytta.R
+import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import prj.edu.bytta.ui.theme.ByttaTheme
 
-@Preview
-@Composable
-fun LoginScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon()
-        Email()
-        Password()
-        SignInButton()
-        SignUpButton()
+
+class LoginScreen: ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+
+            ByttaTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    EmailLogIn(LoginViewModel())
+                }
+            }
+        }
     }
 }
 
+@Composable
+fun EmailLogIn(viewModel: LoginViewModel) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 24.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (viewModel.error.value.isNotBlank()) {
+            ErrorField(viewModel)
+        }
+        Icon()
+        EmailField(viewModel)
+        PasswordField(viewModel)
+        ButtonEmailPasswordLogin(viewModel)
+        ButtonEmailPasswordCreate(viewModel)
+    }
+}
 @Composable
 fun Icon() {
     Icon(
         imageVector = Icons.Rounded.Person,
         contentDescription = null,
         modifier = Modifier.size(78.dp),
-        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Email() {
-    val emailState = remember { mutableStateOf("") }
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth(),
-        value = emailState.value,
-        onValueChange = {emailState.value = it},
-        label = { Text(text = stringResource(R.string.email_bg))},
+fun EmailField(viewModel: LoginViewModel) {
+    val userEmail = viewModel.userEmail.value
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = userEmail,
+        label = { Text(text = stringResource(R.string.email)) },
+        onValueChange = { viewModel.setUserEmail(it) },
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
@@ -71,68 +102,66 @@ fun Email() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Password() {
-    val passwordState = remember { mutableStateOf("") }
-    //val showPassword = remember { mutableStateOf(false) }
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth(),
-        value = passwordState.value,
-        onValueChange = {passwordState.value = it},
-        label = { Text(text = stringResource(R.string.password_bg))},
+fun PasswordField(viewModel: LoginViewModel) {
+    val password = viewModel.password.value
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        visualTransformation = PasswordVisualTransformation(),
+        value = password,
+        label = { Text(text = stringResource(R.string.password)) },
+        onValueChange = { viewModel.setPassword(it) },
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
-        ),
+    ),
         shape = RoundedCornerShape(8.dp),
-        visualTransformation = PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-      /*  trailingIcon = {
-            if (showPassword.value) {
-                IconButton(onClick = {}) {
-                    Icon(
-                        imageVector = Icons.Filled.
-                    )
-                }
-            }
-        }*/
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+    )
+}
+@Composable
+fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
+    val context = LocalContext.current
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        enabled = viewModel.isValidEmailAndPassword(),
+        content = { Text(text = stringResource(R.string.login)) },
+        onClick = {
+            viewModel.signInWithEmailAndPassword()
+            val intent = Intent(context, HomeActivity::class.java)
+            context.startActivity(intent)
+        }
+    )
 
+}
+
+
+
+@Composable
+fun ButtonEmailPasswordCreate(viewModel: LoginViewModel) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        enabled = viewModel.isValidEmailAndPassword(),
+        content = { Text(text = stringResource(R.string.create)) },
+        onClick = { viewModel.createUserWithEmailAndPassword() }
     )
 }
 
-@Composable
-fun SignInButton() {
-    val context = LocalContext.current
-    Button(
-        onClick = {
-            val intent = Intent(context, HomeActivity::class.java)
-            context.startActivity(intent)
-            Toast.makeText(context, "Velkommen", Toast.LENGTH_SHORT).show()
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = stringResource(R.string.log_in)
-        )
-    }
-}
-
 
 @Composable
-fun SignUpButton() {
-    Button(
-        onClick = {
-
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-    ) {
-        Text(
-            text = stringResource(R.string.sign_up)
-        )
-    }
+fun ErrorField(viewModel: LoginViewModel) {
+    Text(
+        text = viewModel.error.value,
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.Red,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+    )
 }
+
 
 
 
