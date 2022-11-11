@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
@@ -75,7 +76,6 @@ class LoginViewModel : ComponentActivity() {
             Log.w(TAG, "SignInWithEmail:failure", task.exception)
         }
     }
-
 
     private fun getCurrentUser() : FirebaseUser? {
         val user = Firebase.auth.currentUser
