@@ -1,11 +1,9 @@
 package prj.edu.bytta
 
+import android.content.Context
 import android.content.Intent
-import android.graphics.Paint.Align
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -13,26 +11,33 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.C
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import prj.edu.bytta.ui.theme.ByttaTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import prj.edu.bytta.ui.theme.Purple80
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.Preferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import prj.edu.bytta.StoreUserEmail.Companion.USER_EMAIL_KEY
+
 
 class ProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,179 +45,308 @@ class ProfileActivity : ComponentActivity() {
         setContent {
             ByttaTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
+                Column(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background) {
-                    ProfileScreen()
+                    horizontalAlignment = Alignment.CenterHorizontally,
+
+                ) {
+                    TopAppbarProfile(context = LocalContext.current.applicationContext)
+                    ProfileCard()
 
                 }
             }
         }
     }
 }
+private val optionsList: ArrayList<OptionsData> = ArrayList()
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(){
+fun TopAppbarProfile(context: Context) {
+    val context = LocalContext.current
+    TopAppBar(
 
-    val notification = rememberSaveable { mutableStateOf("")}
-     if (notification.value.isNotEmpty()){
-         Toast.makeText(LocalContext.current, notification.value, Toast.LENGTH_LONG).show()
-         notification.value = ""
-     }
 
-    var username by rememberSaveable { mutableStateOf("default username") }
-    var eMail by rememberSaveable{ mutableStateOf("default e-mail")}
 
-    
-    Column(
-        modifier = Modifier
+        title = {
+            Text(text = "Profil", maxLines = 1,) },
 
-            .verticalScroll(rememberScrollState())
-            .padding(8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            val context = LocalContext.current
-            Button(onClick = {
+
+
+
+        navigationIcon = {
+            IconButton(onClick = {
                 val intent = Intent(context, HomeActivity::class.java)
-                context.startActivity(intent)}
-            ) {
-                Text(text = "Tilbake")
+                context.startActivity(intent)
+            }) {
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = "Gå tilbake",
+                )
             }
-            Button(onClick = { notification.value = "Profil oppdatert" }) {
-                Text(text = "Rediger profil")
-            }
         }
-
-        ProfileImage()
-
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 4.dp, end = 4.dp),
-
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "Brukernavn", modifier = Modifier.width(180.dp) )
-
-            TextField(value = username, onValueChange = {username = it},
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.Black
-            )  )
-        }
-
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 4.dp, end = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "E-Mail", modifier = Modifier.width(180.dp) )
-
-            TextField(value = eMail, onValueChange = {eMail = it},
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.Black
-                )  )
-        }
-
-            hola()
-
-
-        
-
-        val imageUri = rememberSaveable  { mutableStateOf("")}
-
-    }
-
+    )
 }
 
 @Composable
-fun ProfileImage(){
-    val imageUri = rememberSaveable  { mutableStateOf("")}
-    val painter = rememberAsyncImagePainter(
-        if (imageUri.value.isEmpty())
-            R.drawable.petter_northug_2018_scanpix
-    else
-        imageUri.value
+fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
+    var listPrepared by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            optionsList.clear()
+
+            // Add the data to optionsList
+            prepareOptionsData()
+
+            listPrepared = true
+        }
+    }
+
+    if (listPrepared) {
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+
+            item {
+                // User's image, name, email and edit button
+                UserDetails(context = context)
+            }
+
+            // Show the options
+            items(optionsList) { item ->
+                OptionsItemStyle(item = item, context = context)
+            }
+
+
+        }
+    }
+}
+
+    @Composable
+    fun UserDetails(context: Context) {
+        val imageUri = rememberSaveable { mutableStateOf("") }
+        val painter = rememberAsyncImagePainter(
+            if (imageUri.value.isEmpty())
+                R.drawable.ic_user
+            else
+                imageUri.value
+        )
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let { imageUri.value = it.toString() }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Image(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .size(32.dp),
+
+                painter = painterResource(id = R.drawable.ic_user),
+                contentDescription = "Ditt profilbilde",
+
+
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(weight = 3f, fill = false)
+                        .padding(start = 16.dp)
+
+                ) {
+
+                    // User's name
+                  Text (
+                      text = "Kristian Andersen",
+                      style = TextStyle(
+                          letterSpacing = (0.8).sp
+                      ),
+                      maxLines = 1,
+
+                      )
+
+
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    // User's email
+                    val dataStore = StoreUserEmail(context)
+                    val userEmail = dataStore.getEmail.collectAsState(initial = "")
+                    userEmail.value?.let {
+                        Text(
+                            text = it,
+                            style = TextStyle(
+                                letterSpacing = (0.8).sp
+                            ),
+                            maxLines = 1,
+
+                            )
+                    }
+                }
+
+                val context = LocalContext.current
+                // Edit button
+                IconButton(
+                    modifier = Modifier
+                        .weight(weight = 1f, fill = false),
+                    onClick = {
+                        val intent = Intent(context, EditProfileActivity::class.java)
+                        context.startActivity(intent)
+
+                    }) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit Details",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        }
+    }
+
+
+
+
+@Composable
+private fun OptionsItemStyle(item: OptionsData, context: Context) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(enabled = true) {
+                Toast
+                    .makeText(context, item.title, Toast.LENGTH_SHORT)
+                    .show()
+            }
+            .padding(all = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        // Icon
+        Icon(
+            modifier = Modifier
+                .size(32.dp),
+            imageVector = item.icon,
+            contentDescription = item.title,
+            tint = MaterialTheme.colorScheme.primary
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(weight = 3f, fill = false)
+                    .padding(start = 16.dp)
+            ) {
+
+                // Title
+                Text(
+                    text = item.title,
+                    style = TextStyle(
+                        
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                // Sub title
+                Text(
+                    text = item.subTitle,
+                    style = TextStyle(
+                       
+                    )
+                )
+
+            }
+
+            // Right arrow icon
+            Icon(
+                modifier = Modifier
+                    .weight(weight = 1f, fill = false),
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = item.title,
+
+            )
+        }
+
+    }
+}
+
+private fun prepareOptionsData() {
+
+    val appIcons = Icons.Outlined
+
+    optionsList.add(
+        OptionsData(
+
+            icon = appIcons.Person,
+            title = "Konto",
+            subTitle = "",
+        )
     )
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ){ uri: Uri? ->
-        uri?.let { imageUri.value = it.toString() }
-    }
 
 
-    Column(
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.ShoppingCart,
+            title = "Dine byttehandler",
+            subTitle = ""
+        )
+    )
 
-        modifier = Modifier
 
-            .padding(8.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.Settings,
+            title = "Innstillinger",
+            subTitle = ""
 
-       Card(
-           shape = CircleShape,
+        )
+    )
 
-           modifier = Modifier
-               .padding(8.dp)
-               .size(100.dp)
-       ) {
-           Image(
-               painter = painter,
-               contentDescription = null,
-               modifier = Modifier
-                   .wrapContentSize()
-                   .clickable { launcher.launch("image/*") },
-               contentScale = ContentScale.Crop
-               )
-          }
-        Text(text = "Endre profilbilde")
-    }
+
+
+    optionsList.add(
+        OptionsData(
+            icon = appIcons.Star,
+            title = "Favoritter",
+            subTitle = ""
+        )
+    )
 }
 
-@Composable
-fun hola() {
-
-    Column( modifier = Modifier
-
-        .padding(16.dp)
-        .fillMaxWidth()
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(onClick = { /*TODO*/ }
-
-            ) {
-                Text(text = "Ny byttehandel")
-
-            }
-
-            Button(onClick = { /*TODO*/ }
-
-            ) {
-                Text(text = "Dine favoritter")
-
-            }
-
-        }
-
-    }
-}
+data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String)
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-          ByttaTheme {
-        ProfileScreen()
+    ByttaTheme {
+        TopAppbarProfile(context = LocalContext.current.applicationContext)
+        ProfileCard()
     }
 }
 
