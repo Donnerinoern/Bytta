@@ -74,9 +74,12 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
         .get()
     Scaffold(
     topBar = {
+        val context = LocalContext.current
              Button (
                  content = { Text(text = stringResource(R.string.loggut))},
-                 onClick = { viewModel.signOut() }
+                 onClick = { viewModel.signOut()
+                     val intent = Intent(context, Login::class.java)
+                     context.startActivity(intent)}
                      )
     },
         bottomBar = {
