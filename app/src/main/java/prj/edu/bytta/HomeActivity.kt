@@ -18,14 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class HomeActivity(navController: NavHostController) : ComponentActivity() {
+class HomeActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val db = Firebase.firestore
         var trade: Trade = Trade("error", "error", "error")

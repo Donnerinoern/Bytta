@@ -1,6 +1,6 @@
 package prj.edu.bytta
 
-import android.content.ContentValues.TAG
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.media.Image
@@ -49,7 +49,7 @@ class EditProfileActivity : ComponentActivity()  {
 
                     ) {
                     TopAppbarEditProfile(context = LocalContext.current.applicationContext)
-                    EditProfilePage(viewmodel = profileViewmodel())
+                    EditProfilePage(viewModel = ProfileViewmodel())
 
                 }
             }
@@ -85,17 +85,11 @@ fun TopAppbarEditProfile(context: Context) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfilePage(context: Context = LocalContext.current.applicationContext, viewmodel: profileViewmodel) {
-
+fun EditProfilePage(context: Context = LocalContext.current.applicationContext, viewModel: ProfileViewmodel) {
     val user = Firebase.auth.currentUser
-    ProfileImage(context = context)
-/*
-    // a coroutine scope
-    val scope = rememberCoroutineScope()
-    // we instantiate the saveEmail class
-    val dataStore = StoreUserEmail(context)
-    */
+    val userEmail = viewModel.userEmail.value
 
+    ProfileImage(context = context)
     Column(
         modifier = Modifier
             .padding(20.dp)
@@ -104,27 +98,11 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext, 
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-       // var email by rememberSaveable { mutableStateOf("") }
-/*
-        OutlinedTextField(
 
-            value = email,
-            onValueChange = { email = it
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType
-                = KeyboardType.Email
-            ),
 
-            label = {
-                Text(text = "Brukernavn")
-            }
-        )
-*/
-        var email by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = email,
-            onValueChange = {email = it
+            value = userEmail,
+            onValueChange = {viewModel.setUserEmail(it)
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType
@@ -147,22 +125,17 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext, 
         )
 */
         Button(onClick = {
+           // viewModel.updateEmail()
+            viewModel.updateEmail()
 
-            Toast.makeText(context, "Endringer lagret!", Toast.LENGTH_SHORT).show()
-            /*
-            //launch the class in a coroutine scope
-            scope.launch {
-                dataStore.saveEmail(email)
-            }
+            Toast.makeText(context, userEmail, Toast.LENGTH_SHORT).show()
 
-             */
         }
         ) {
             Text(text = "Lagre endringer")
         }
 
-        //val userEmail = dataStore.getEmail.collectAsState(initial = "")
-        //Text(text = userEmail.value!!)
+
 
     }
 }
@@ -213,3 +186,4 @@ fun ProfileImage(context: Context) {
 
 
 }
+

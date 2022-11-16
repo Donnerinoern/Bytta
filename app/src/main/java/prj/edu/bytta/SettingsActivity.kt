@@ -51,7 +51,7 @@ class SettingsActivity : ComponentActivity() {
 
                     ) {
                     TopAppbarSettings(context = LocalContext.current.applicationContext)
-                    //utseendeSettings(context = LocalContext.current.applicationContext)
+                    utseendeSettings(context = LocalContext.current.applicationContext)
                 }
             }
         }
@@ -90,7 +90,7 @@ fun TopAppbarSettings(context: Context) {
 
 
 
-/*
+
 
 @Composable
 fun utseendeSettings(context: Context) {
@@ -99,8 +99,10 @@ fun utseendeSettings(context: Context) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp, 0.dp)
-            .background(MaterialTheme.colorScheme.primary),
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(16.dp, 10.dp)
+
+            ,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
 
@@ -111,27 +113,29 @@ fun utseendeSettings(context: Context) {
 
         Text(
             text = "Utseende",
-
             maxLines = 1,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
 
         )
-
+/*
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_dark_mode_24), contentDescription = null)
 
 
-
+*/
 
 
     }
 
-    Spacer(modifier = Modifier
-        .height(5.dp))
+    Divider(modifier = Modifier
+        .height(10.dp)
+        .background(MaterialTheme.colorScheme.secondary)
+
+        )
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .background(color = Color.Red)
+
 
     ) {
 
@@ -139,8 +143,9 @@ fun utseendeSettings(context: Context) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp, 0.dp)
-                .background(MaterialTheme.colorScheme.secondary),
+
+                .padding(16.dp, 0.dp),
+
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -151,14 +156,73 @@ fun utseendeSettings(context: Context) {
 
 
         }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+
+                .padding(16.dp, 0.dp)
+                ,
+
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(text = "Bestefar")
+
+            Switch(checked = mCheckedState.value, onCheckedChange = { mCheckedState.value = it })
+
+
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+
+                .padding(16.dp, 0.dp),
+
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(text = "bror jeg vet ikke")
+
+            Switch(checked = mCheckedState.value, onCheckedChange = { mCheckedState.value = it })
+
+
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(16.dp, 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+
+
+        ) {
+
+
+            Text(
+                text = "Varslinger",
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+
+                )
+
+
+        }
+        Divider(
+            modifier = Modifier
+                .height(10.dp))
+
     }
-
-
 
 }
     
     
-  */
+
     
     
 

@@ -18,12 +18,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
+
 
 
 @Composable
-fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -38,7 +37,7 @@ fun LoginScreen(navController: NavHostController, viewModel: LoginViewModel) {
         Icon()
         EmailField(viewModel)
         PasswordField(viewModel)
-        ButtonEmailPasswordLogin(viewModel, navController)
+        ButtonEmailPasswordLogin(viewModel)
         ButtonEmailPasswordCreate(viewModel)
     }
 }
@@ -89,7 +88,7 @@ fun PasswordField(viewModel: LoginViewModel) {
 }
 
 @Composable
-fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavController) {
+fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,7 +97,7 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavContro
         content = { Text(text = stringResource(R.string.login)) },
         onClick = {
             viewModel.signInWithEmailAndPassword()
-            navController.navigate(Screen.HomeActivity.route)
+
         }
     )
 }

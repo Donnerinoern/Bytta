@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
@@ -77,6 +76,7 @@ class LoginViewModel : ComponentActivity() {
         }
     }
 
+
     private fun getCurrentUser() : FirebaseUser? {
         val user = Firebase.auth.currentUser
         Log.d(TAG, "user display name: ${user?.displayName}, email: ${user?.email}")
@@ -89,18 +89,6 @@ class LoginViewModel : ComponentActivity() {
         return true
     }
 
-    private fun updateEmail() {
-        // [START update_email]
-        val user = Firebase.auth.currentUser
-
-        user!!.updateEmail("")
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "User email address updated.")
-                }
-            }
-        // [END update_email]
-    }
 
     private fun signOut() {
         Firebase.auth.signOut()
