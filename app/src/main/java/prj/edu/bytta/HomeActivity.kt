@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -25,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class HomeActivity(navController: NavHostController) : ComponentActivity() {
+class HomeActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val db = Firebase.firestore
         var trade: Trade = Trade("error", "error", "error")
@@ -46,15 +47,17 @@ class HomeActivity(navController: NavHostController) : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(db, trade)
+                Content(db, trade, viewModel = LoginViewModel())
             }
         }
     }
 }
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(db: FirebaseFirestore, trade: Trade) {
+fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Home", "Profile", "Messages")
     val icons = listOf(
@@ -70,6 +73,12 @@ fun Content(db: FirebaseFirestore, trade: Trade) {
     db.collection("trades")
         .get()
     Scaffold(
+    topBar = {
+             Button (
+                 content = { Text(text = stringResource(R.string.loggut))},
+                 onClick = { viewModel.signOut() }
+                     )
+    },
         bottomBar = {
             BottomAppBar {
                 NavigationBar() {
