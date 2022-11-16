@@ -1,5 +1,11 @@
 package prj.edu.bytta
 
+import android.content.ContentValues
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,14 +18,42 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import prj.edu.bytta.ui.theme.ByttaTheme
+import com.google.android.gms.tasks.Task as Task1
 
 
+class Login: ComponentActivity() {
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+
+            ByttaTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    LoginScreen(viewModel = LoginViewModel())
+                }
+            }
+        }
+
+    }
+}
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel) {
@@ -89,6 +123,8 @@ fun PasswordField(viewModel: LoginViewModel) {
 
 @Composable
 fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
+    val context = LocalContext.current
+
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,11 +132,24 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
         enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.login)) },
         onClick = {
-            viewModel.signInWithEmailAndPassword()
-
+            try {
+                viewModel.signInWithEmailAndPassword()
+                if (viewModel._userEmail == viewModel.userEmail || viewModel._password == viewModel.password) {
+                    val intent = Intent(context, HomeActivity::class.java)
+                    context.startActivity(intent)
+                    Log.d(ContentValues.TAG, "SignInWithEmail:success")
+                } else {
+                    viewModel._error.value = "Unknown error"
+                    // If sign in fails, display a message to the user.
+                    Log.w(ContentValues.TAG, "SignInWithEmail:failure")
+                }
+            } catch (e: Exception) {
+                viewModel._error.value = e.localizedMessage ?: "Unknown error"
+                Log.d(ContentValues.TAG, "Sign in fail: $e")
+            }
+                }
+             )
         }
-    )
-}
 
 @Composable
 fun ButtonEmailPasswordCreate(viewModel: LoginViewModel) {
@@ -124,6 +173,7 @@ fun ErrorField(viewModel: LoginViewModel) {
         fontWeight = FontWeight.Bold
     )
 }
+
 
 
 
