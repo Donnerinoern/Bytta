@@ -1,10 +1,12 @@
 package prj.edu.bytta
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,6 +31,8 @@ import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import prj.edu.bytta.ui.theme.ByttaTheme
 
@@ -45,7 +49,7 @@ class EditProfileActivity : ComponentActivity()  {
 
                     ) {
                     TopAppbarEditProfile(context = LocalContext.current.applicationContext)
-                    EditProfilePage()
+                    EditProfilePage(viewmodel = profileViewmodel())
 
                 }
             }
@@ -81,8 +85,9 @@ fun TopAppbarEditProfile(context: Context) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfilePage(context: Context = LocalContext.current.applicationContext) {
+fun EditProfilePage(context: Context = LocalContext.current.applicationContext, viewmodel: profileViewmodel) {
 
+    val user = Firebase.auth.currentUser
     ProfileImage(context = context)
 /*
     // a coroutine scope
@@ -116,9 +121,10 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
             }
         )
 */
+        var email by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = "",
-            onValueChange = {
+            value = email,
+            onValueChange = {email = it
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType
@@ -141,6 +147,7 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
         )
 */
         Button(onClick = {
+
             Toast.makeText(context, "Endringer lagret!", Toast.LENGTH_SHORT).show()
             /*
             //launch the class in a coroutine scope

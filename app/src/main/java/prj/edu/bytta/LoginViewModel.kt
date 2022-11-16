@@ -89,6 +89,19 @@ class LoginViewModel : ComponentActivity() {
         return true
     }
 
+    private fun updateEmail() {
+        // [START update_email]
+        val user = Firebase.auth.currentUser
+
+        user!!.updateEmail("")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "User email address updated.")
+                }
+            }
+        // [END update_email]
+    }
+
     private fun signOut() {
         Firebase.auth.signOut()
     }
