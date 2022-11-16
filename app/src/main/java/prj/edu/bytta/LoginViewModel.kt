@@ -89,7 +89,7 @@ class LoginViewModel : ComponentActivity() {
         return true
     }
 
-    private fun signOut() {
+    fun signOut() {
         Firebase.auth.signOut()
     }
 }

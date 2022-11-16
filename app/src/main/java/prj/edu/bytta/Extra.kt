@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SingleMessage(message: String, isCurrentUser: Boolean) {
     Card(
-        shape = RoundedCornerShape(15.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isCurrentUser) MaterialTheme.colorScheme.primary else Color.White
         )

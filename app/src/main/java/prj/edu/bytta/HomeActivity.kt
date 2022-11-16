@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -45,11 +46,13 @@ class HomeActivity : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(db, trade)
+                Content(db, trade, )
             }
         }
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
