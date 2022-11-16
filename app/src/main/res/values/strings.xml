@@ -13,5 +13,5 @@
     <string name="sign_in_with_email">Logg Inn Med Email</string>
     <string name="welcome">Velkommen</string>
     <string name="sign_in_with_google">Logg Inn Med Google</string>
-    <string name="loggut">logg ut</string>
+    <string name="loggut">Logg Ut</string>
 </resources>
