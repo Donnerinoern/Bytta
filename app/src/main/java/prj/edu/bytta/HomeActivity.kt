@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +59,7 @@ class HomeActivity: ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
+    val context = LocalContext.current
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Home", "Profile", "Messages")
     val icons = listOf(
@@ -74,18 +76,17 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
         .get()
     Scaffold(
     topBar = {
-        val context = LocalContext.current
              Button (
                  content = { Text(text = stringResource(R.string.loggut))},
                  onClick = { viewModel.signOut()
                      val intent = Intent(context, Login::class.java)
-                     context.startActivity(intent)}
+                     context.startActivity(intent)
+                 }
                      )
     },
         bottomBar = {
             BottomAppBar {
                 NavigationBar() {
-                    val context = LocalContext.current
                     items.forEachIndexed { index, item ->
                         NavigationBarItem(
                             icon = {Icon(imageVector = icons[index], contentDescription = items[index])},
