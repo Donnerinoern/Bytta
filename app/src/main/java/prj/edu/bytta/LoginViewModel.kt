@@ -1,26 +1,21 @@
 package prj.edu.bytta
 
+import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+
 
 class LoginViewModel : ComponentActivity() {
     private val _isLoggedIn = mutableStateOf(false)
@@ -31,7 +26,6 @@ class LoginViewModel : ComponentActivity() {
     val userEmail: State<String> = _userEmail
     val _password = mutableStateOf("")
     val password: State<String> = _password
-
     // Setters
     fun setUserEmail(email: String) {
         _userEmail.value = email
@@ -44,10 +38,10 @@ class LoginViewModel : ComponentActivity() {
     fun setError(error: String) {
         _error.value = error
     }
-
     init {
         _isLoggedIn.value = getCurrentUser() != null
     }
+
 
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
@@ -65,31 +59,36 @@ class LoginViewModel : ComponentActivity() {
 
 
     fun createUserWithEmailAndPassword() {
-        _error.value = ""
         Firebase.auth.createUserWithEmailAndPassword(userEmail.value, password.value)
-            .addOnCompleteListener { task -> signInCompletedTask(task) }
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "createUserWithEmail:success")
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+        // [END create_user_with_email]
     }
 
-    fun signInWithEmailAndPassword()  {
-        try {
-            _error.value = ""
-            Firebase.auth.signInWithEmailAndPassword(userEmail.value, password.value)
-                .addOnCompleteListener { task -> signInCompletedTask(task) }
-        } catch (e: Exception) {
-            _error.value = e.localizedMessage ?: "Unknown error"
-            Log.d(TAG, "Sign in fail: $e")
-        }
-    }
+    fun signInWithEmailAndPassword(context: Context) {
+        Firebase.auth.signInWithEmailAndPassword(userEmail.value, password.value)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithEmail:success")
+                    val intent = Intent(context, HomeActivity::class.java)
+                    context.startActivity(intent)
 
-    private fun signInCompletedTask(task: Task<AuthResult>) {
-        if (task.isSuccessful) {
-            // success action and error message
-            Log.d(TAG, "SignInWithEmail:success")
-        } else {
-            _error.value = task.exception?.localizedMessage ?: "Unknown error"
-            // If sign in fails, display a message to the user.
-            Log.w(TAG, "SignInWithEmail:failure", task.exception)
-        }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    _error.value = task.exception?.localizedMessage ?: "Unknown error"
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                }
+            }
     }
 
     private fun getCurrentUser(): FirebaseUser? {
@@ -104,6 +103,7 @@ class LoginViewModel : ComponentActivity() {
         }
         return true
     }
+
 
 
      fun signOut() {
