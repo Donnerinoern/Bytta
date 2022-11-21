@@ -56,6 +56,12 @@ class LoginViewModel : ComponentActivity() {
         auth = Firebase.auth
         // [END initialize_auth]
     }
+    fun signupBtnLink(context: Context){
+        val intent = Intent(context, Signup::class.java)
+        context.startActivity(intent)
+
+    }
+
 
 
     fun createUserWithEmailAndPassword() {

@@ -1,12 +1,9 @@
 package prj.edu.bytta
 
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,16 +21,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
@@ -87,7 +81,7 @@ fun TopAppbarEditProfile(context: Context) {
 @Composable
 fun EditProfilePage(context: Context = LocalContext.current.applicationContext, viewModel: ProfileViewmodel) {
     val user = Firebase.auth.currentUser
-    val userEmail = viewModel.userEmail.value
+    val email = viewModel._userEmail.value
 
     ProfileImage(context = context)
     Column(
@@ -99,10 +93,10 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext, 
 
     ) {
 
-
+        var text by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = userEmail,
-            onValueChange = {viewModel.setUserEmail(it)
+            value = text,
+            onValueChange = { text = it
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType
@@ -125,10 +119,9 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext, 
         )
 */
         Button(onClick = {
-           // viewModel.updateEmail()
-            viewModel.updateEmail()
+            viewModel.updateEmail(email)
 
-            Toast.makeText(context, userEmail, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 
         }
         ) {

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -40,6 +41,7 @@
             android:name=".LoginViewModel"
             android:exported="true">
             <meta-data
+                android:inputType="textEmailAddress"
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
@@ -57,6 +59,7 @@
                 android:value="" />
         </activity>
         <activity
+            android:inputType="textEmailAddress"
             android:windowSoftInputMode="adjustResize"
             android:name=".EditProfileActivity"
             android:exported="true"
@@ -88,6 +91,45 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:windowSoftInputMode="adjustResize"
+            android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Bytta">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:windowSoftInputMode="adjustResize"
+            android:name=".Signup"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Bytta">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+
+
+
+
 
 
     </application>

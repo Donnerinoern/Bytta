@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -56,13 +58,13 @@ class ProfileActivity : ComponentActivity() {
                 ) {
                     TopAppbarProfile(context = LocalContext.current.applicationContext)
                     ProfileCard()
-
                 }
             }
         }
     }
 }
 private val optionsList: ArrayList<OptionsData> = ArrayList()
+
 
 
 
@@ -223,6 +225,7 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
                         val intent = Intent(context, EditProfileActivity::class.java)
                         context.startActivity(intent)
 
+
                     }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
@@ -281,7 +284,9 @@ private fun OptionsItemStyle(item: OptionsData, context: Context) {
                     )
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier
+                    .height(2.dp)
+                    .background(color = Color.Red))
 
                 // Sub title
                 Text(
@@ -312,7 +317,6 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-
             icon = appIcons.Person,
             title = "Konto",
             subTitle = "",

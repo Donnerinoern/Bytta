@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.rounded.DateRange
@@ -75,8 +76,8 @@ fun TopAppbarSettings(context: Context) {
 
         navigationIcon = {
             IconButton(onClick = {
-
-            }) {
+                val intent = Intent(context, ProfileActivity::class.java)
+                context.startActivity(intent)            }) {
                 androidx.compose.material3.Icon(
                     Icons.Filled.ArrowBack,
                     contentDescription = "Gå tilbake",
@@ -100,9 +101,7 @@ fun utseendeSettings(context: Context) {
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(16.dp, 10.dp)
-
-            ,
+            .padding(16.dp, 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
 
@@ -133,11 +132,7 @@ fun utseendeSettings(context: Context) {
 
         )
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
 
-
-    ) {
 
 
         Row(
@@ -157,41 +152,11 @@ fun utseendeSettings(context: Context) {
 
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(16.dp, 0.dp)
-                ,
-
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(text = "Bestefar")
-
-            Switch(checked = mCheckedState.value, onCheckedChange = { mCheckedState.value = it })
+    Column(modifier = Modifier
+        .fillMaxWidth()
 
 
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(16.dp, 0.dp),
-
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(text = "bror jeg vet ikke")
-
-            Switch(checked = mCheckedState.value, onCheckedChange = { mCheckedState.value = it })
-
-
-        }
-
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -216,6 +181,60 @@ fun utseendeSettings(context: Context) {
         Divider(
             modifier = Modifier
                 .height(10.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+
+                .padding(16.dp, 0.dp),
+
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(text = "Meldinger")
+
+            Icon(
+                modifier = Modifier
+                    .size(50.dp)
+                    .weight(weight = 1f, fill = false),
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = "Høyre pil",
+
+                )
+
+
+
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+
+                .padding(16.dp, 0.dp),
+
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(text = "Meldinger")
+
+            Icon(
+                modifier = Modifier
+                    .size(50.dp)
+                    .weight(weight = 1f, fill = false),
+                imageVector = Icons.Filled.KeyboardArrowRight,
+                contentDescription = "Høyre pil",
+
+                )
+
+
+
+        }
+
+
+
+
 
     }
 

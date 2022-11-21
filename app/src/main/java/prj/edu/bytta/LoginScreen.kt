@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import android.content.Intent
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import prj.edu.bytta.ui.theme.ByttaTheme
+
 
 
 class Login: ComponentActivity() {
@@ -65,7 +67,7 @@ fun LoginScreen(viewModel: LoginViewModel) {
         EmailField(viewModel)
         PasswordField(viewModel)
         ButtonEmailPasswordLogin(viewModel)
-        ButtonEmailPasswordCreate(viewModel)
+        signupBtnLink(viewModel)
     }
 }
 @Composable
@@ -131,6 +133,27 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
         }
 
 @Composable
+fun signupBtnLink(viewModel: LoginViewModel) {
+    val context = LocalContext.current
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        content = { Text(text = stringResource(R.string.create)) },
+        onClick = {
+           viewModel.signupBtnLink(context = context)
+        }
+    )
+}
+
+
+
+
+
+
+
+/*
+@Composable
 fun ButtonEmailPasswordCreate(viewModel: LoginViewModel) {
     Button(
         modifier = Modifier
@@ -138,9 +161,13 @@ fun ButtonEmailPasswordCreate(viewModel: LoginViewModel) {
             .height(50.dp),
         enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.create)) },
-        onClick = { viewModel.createUserWithEmailAndPassword() }
+       // onClick = { viewModel.createUserWithEmailAndPassword() }
+    onClick = {
+
+    }
     )
 }
+*/
 
 @Composable
 fun ErrorField(viewModel: LoginViewModel) {
