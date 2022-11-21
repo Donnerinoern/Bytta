@@ -2,9 +2,9 @@ package prj.edu.bytta
 
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -21,14 +21,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.launch
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
@@ -44,7 +43,7 @@ class EditProfileActivity : ComponentActivity()  {
 
                     ) {
                     TopAppbarEditProfile(context = LocalContext.current.applicationContext)
-                    EditProfilePage()
+                    EditProfilePage(viewModel = ProfileViewmodel())
 
                 }
             }
@@ -80,14 +79,11 @@ fun TopAppbarEditProfile(context: Context) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfilePage(context: Context = LocalContext.current.applicationContext) {
+fun EditProfilePage(context: Context = LocalContext.current.applicationContext, viewModel: ProfileViewmodel) {
+    val user = Firebase.auth.currentUser
+    val email = viewModel._userEmail.value
 
     ProfileImage(context = context)
-    // a coroutine scope
-    val scope = rememberCoroutineScope()
-    // we instantiate the saveEmail class
-    val dataStore = StoreUserEmail(context)
-
     Column(
         modifier = Modifier
             .padding(20.dp)
@@ -96,26 +92,11 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
-        var email by rememberSaveable { mutableStateOf("") }
-/*
-        OutlinedTextField(
 
-            value = email,
-            onValueChange = { email = it
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType
-                = KeyboardType.Email
-            ),
-
-            label = {
-                Text(text = "Brukernavn")
-            }
-        )
-*/
+        var text by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it
+            value = text,
+            onValueChange = { text = it
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType
@@ -138,18 +119,16 @@ fun EditProfilePage(context: Context = LocalContext.current.applicationContext) 
         )
 */
         Button(onClick = {
-            //launch the class in a coroutine scope
-            scope.launch {
-                dataStore.saveEmail(email)
-            }
+            viewModel.updateEmail(email)
+
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+
         }
         ) {
             Text(text = "Lagre endringer")
         }
 
-        val userEmail = dataStore.getEmail.collectAsState(initial = "")
 
-        Text(text = userEmail.value!!)
 
     }
 }
@@ -200,3 +179,4 @@ fun ProfileImage(context: Context) {
 
 
 }
+
