@@ -48,7 +48,7 @@ class HomeActivity: ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(db, trade, viewModel = LoginViewModel())
+                Content(db, trade, viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
             }
         }
     }
@@ -58,7 +58,7 @@ class HomeActivity: ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
+fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel, navController: NavController) {
     val context = LocalContext.current
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Home", "Profile", "Messages")
@@ -79,8 +79,7 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
              Button (
                  content = { Text(text = stringResource(R.string.loggut))},
                  onClick = { viewModel.signOut()
-                     val intent = Intent(context, Login::class.java)
-                     context.startActivity(intent)
+                     navController.navigate("login_screen")
                  }
                      )
     },

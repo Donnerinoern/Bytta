@@ -1,7 +1,9 @@
 package prj.edu.bytta
 
+
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -23,7 +25,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import prj.edu.bytta.ui.theme.ByttaTheme
+
 
 
 class Login: ComponentActivity() {
@@ -40,7 +46,7 @@ class Login: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginScreen(viewModel = LoginViewModel())
+                    LoginScreen(viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
                 }
             }
         }
@@ -49,7 +55,7 @@ class Login: ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel) {
+fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -64,8 +70,9 @@ fun LoginScreen(viewModel: LoginViewModel) {
         Icon()
         EmailField(viewModel)
         PasswordField(viewModel)
-        ButtonEmailPasswordLogin(viewModel)
-        ButtonEmailPasswordCreate(viewModel)
+        ButtonEmailPasswordLogin(viewModel, navController)
+        ButtonEmailPasswordCreate(navController)
+
     }
 }
 @Composable
@@ -115,8 +122,9 @@ fun PasswordField(viewModel: LoginViewModel) {
 }
 
 @Composable
-fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
+fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavController) {
     val context = LocalContext.current
+    val user = Firebase.auth.currentUser
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,21 +132,36 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel) {
         enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.login)) },
         onClick = {
-                viewModel.signInWithEmailAndPassword(context = context)
+                viewModel.signInWithEmailAndPassword()
+                if (user != null) {
+                    navController.navigate("register_screen") {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                        Toast.makeText(
+                            context,
+                            "Velkommen  ${user.displayName} " ,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        viewModel.getCurrentUser()
+                    }
+                } else
 
+                    navController.navigate("login_screen") {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
                 }
              )
         }
 
 @Composable
-fun ButtonEmailPasswordCreate(viewModel: LoginViewModel) {
+fun ButtonEmailPasswordCreate(navController: NavController) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
-        enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.create)) },
-        onClick = { viewModel.createUserWithEmailAndPassword() }
+        onClick = { navController.navigate("register_screen") }
     )
 }
 
