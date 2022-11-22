@@ -39,6 +39,7 @@ class MessageActivity : ComponentActivity() {
                     //Conversation(SampleData.conversationSample)
                     MessageView()
 
+
                 }
             }
         }

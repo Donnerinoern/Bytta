@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -55,9 +56,11 @@ class HomeActivity: ComponentActivity() {
 
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
+    val context = LocalContext.current
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Home", "Profile", "Messages")
     val icons = listOf(
@@ -74,7 +77,7 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
         .get()
     Scaffold(
     topBar = {
-        val context = LocalContext.current
+
              Button (
                  content = { Text(text = stringResource(R.string.loggut))},
                  onClick = { viewModel.signOut()
@@ -85,7 +88,7 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
         bottomBar = {
             BottomAppBar {
                 NavigationBar() {
-                    val context = LocalContext.current
+
                     items.forEachIndexed { index, item ->
                         NavigationBarItem(
                             icon = {Icon(imageVector = icons[index], contentDescription = items[index])},

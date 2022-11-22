@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import prj.edu.bytta.ui.theme.ByttaTheme
 
@@ -20,6 +21,7 @@ class MainActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
 
             ByttaTheme {
