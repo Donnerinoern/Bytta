@@ -145,9 +145,8 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavContro
         onClick = {
                 viewModel.signInWithEmailAndPassword()
                 if (user != null) {
-                    val intent = Intent(context, HomeActivity::class.java)
-                    context.startActivity(intent)
-                        Toast.makeText(
+                    navController.navigate("home_screen")
+                    Toast.makeText(
                             context,
                             "Velkommen" ,
                             Toast.LENGTH_SHORT

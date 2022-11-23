@@ -12,8 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -30,7 +33,7 @@ class HomeActivity : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()))
+                Content(ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()), viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
             }
         }
     }
@@ -38,11 +41,19 @@ class HomeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(vm: ByttaViewModel) {
+fun Content(vm: ByttaViewModel, viewModel: LoginViewModel, navController: NavController) {
     val tradeDataLoading = vm.inProgress.value
     val trades = vm.trades.value
     val tradeFeedLoading = vm.tradesFeedProgress
     Scaffold(
+            topBar = {
+                Button (
+                    content = { Text(text = stringResource(R.string.loggut))},
+                    onClick = {
+                        viewModel.signOut()
+                        navController.navigate("login_screen") }
+                )
+            },
         bottomBar = {
             NavBar()
         }

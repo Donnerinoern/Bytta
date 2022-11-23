@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 
 @Composable
@@ -27,12 +29,13 @@ fun Navigation(){
             navController = navController
         )
         })
-  /*   composable("home_screen", content = { Content(
+         composable("home_screen", content = { Content(
             navController = navController,
-            vm = ByttaViewModel()
+            vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()),
+            viewModel = LoginViewModel()
         )
         })
-*/
+
 })
 }
 

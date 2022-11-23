@@ -55,6 +55,7 @@ class SignIn : AppCompatActivity() {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                         .setLogo(R.drawable.ic_banner_foreground)
+                        .setIsSmartLockEnabled(false)
                 .build()
         signInLauncher.launch(signInIntent)
 
