@@ -16,4 +16,5 @@
     <string name="loggut">Logg Ut</string>
     <string name="username">Brukernavn</string>
     <string name="Log">Log In With Email</string>
+    <string name="logingoogle">Logg Inn Med Google</string>
 </resources>

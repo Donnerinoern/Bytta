@@ -79,7 +79,7 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel, navC
              Button (
                  content = { Text(text = stringResource(R.string.loggut))},
                  onClick = { viewModel.signOut()
-                     val intent = Intent(context, SignIn::class.java)
+                     val intent = Intent(context, Login::class.java)
                      context.startActivity(intent)
                  }
                      )
