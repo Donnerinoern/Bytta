@@ -22,9 +22,6 @@ import com.google.firebase.ktx.Firebase
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 
-
-const val USERS = "users"
-
 class LoginViewModel : ComponentActivity() {
 
     private var db = Firebase.firestore
