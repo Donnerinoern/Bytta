@@ -1,10 +1,8 @@
 package prj.edu.bytta
 
-import android.content.ContentValues
+
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -79,7 +77,7 @@ class SignIn : AppCompatActivity() {
 
     }
 
-    fun signOut() {
+    private fun signOut() {
         Firebase.auth.signOut()
     }
     }

@@ -145,11 +145,7 @@ fun ButtonEmailPasswordRegister(viewModel: LoginViewModel, navController: NavCon
                     viewModel.getCurrentUser()
                 }
             } else
-            navController.navigate("register_screen") {
-
-
-
-                }
+                viewModel._error.value = "Email allerede i bruk"
             }
 
     )
