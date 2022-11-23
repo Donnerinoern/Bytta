@@ -1,7 +1,6 @@
 package prj.edu.bytta
 
 
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -20,11 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -65,13 +62,14 @@ fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (viewModel.error.value.isNotBlank()) {
-            ErrorField(viewModel)
+            viewModel.ErrorField()
         }
         Icon()
         EmailField(viewModel)
         PasswordField(viewModel)
         ButtonEmailPasswordLogin(viewModel, navController)
         ButtonEmailPasswordCreate(navController)
+        LoggUtKnapp(navController, viewModel)
 
     }
 }
@@ -135,46 +133,44 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavContro
                 viewModel.signInWithEmailAndPassword()
                 if (user != null) {
                     navController.navigate("register_screen") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
                         Toast.makeText(
                             context,
-                            "Velkommen  ${user.displayName} " ,
+                            "Velkommen" ,
                             Toast.LENGTH_SHORT
                         ).show()
                         viewModel.getCurrentUser()
                     }
                 } else
+                    viewModel.reload()
 
-                    navController.navigate("login_screen") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
                 }
              )
         }
 
 @Composable
 fun ButtonEmailPasswordCreate(navController: NavController) {
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        content = { Text(text = stringResource(R.string.create)) },
-        onClick = { navController.navigate("register_screen") }
-    )
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            content = { Text(text = stringResource(R.string.create)) },
+            onClick = { navController.navigate("register_screen") }
+
+        )
+
 }
 
 @Composable
-fun ErrorField(viewModel: LoginViewModel) {
-    Text(
-        text = viewModel.error.value,
-        modifier = Modifier.fillMaxWidth(),
-        color = Color.Red,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold
-    )
+fun LoggUtKnapp(navController: NavController, viewModel: LoginViewModel) {
+    Button (
+        content = { Text(text = stringResource(R.string.loggut))},
+        onClick = { viewModel.signOut()
+            navController.navigate("login_screen")
+})
 }
+
+
+
 
 
 

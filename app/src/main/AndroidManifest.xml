@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Bytta"
+        android:theme="@style/ByttaTheme"
         tools:targetApi="31">
         <activity
             android:name=".HomeActivity"
@@ -46,10 +46,21 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".SignIn" android:theme="@style/Theme.AppCompat.DayNight"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Bytta">
+            android:theme="@style/ByttaTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -64,7 +75,7 @@
             android:name=".EditProfileActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Bytta">
+            android:theme="@style/ByttaTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -80,7 +91,7 @@
             android:name=".ProfileActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Bytta">
+            android:theme="@style/ByttaTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -97,7 +108,7 @@
             android:name=".SettingsActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Bytta">
+            android:theme="@style/ByttaTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -108,29 +119,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
-        <activity
-            android:windowSoftInputMode="adjustResize"
-            android:name=".Signup"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Bytta">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-
-
-
-
-
-
 
     </application>
 

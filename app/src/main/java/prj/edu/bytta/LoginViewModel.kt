@@ -1,8 +1,10 @@
 package prj.edu.bytta
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
@@ -13,13 +15,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.data.Event
+import prj.edu.bytta.data.UserData
 
+
+const val USERS = "users"
 
 class LoginViewModel : ComponentActivity() {
+
+    private var db = Firebase.firestore
+
+    // [START declare_auth]
+    private lateinit var auth: FirebaseAuth
+    // [END declare_auth]
+
     private val _isLoggedIn = mutableStateOf(false)
     val isLoggedIn: State<Boolean> = _isLoggedIn
     val _error = mutableStateOf("")
@@ -30,9 +43,11 @@ class LoginViewModel : ComponentActivity() {
     val userEmail: State<String> = _userEmail
     val _password = mutableStateOf("")
     val password: State<String> = _password
+
+
     // Setters
-    fun setUserName(user: String) {
-        _userName.value = user
+    fun setUserName(username: String) {
+        _userName.value = username
     }
 
     fun setUserEmail(email: String) {
@@ -43,19 +58,13 @@ class LoginViewModel : ComponentActivity() {
         _password.value = password
     }
 
-    fun setError(error: String) {
-        _error.value = error
+    fun setError(error: String.Companion) {
+        _error.value = error.toString()
     }
+
     init {
         _isLoggedIn.value = getCurrentUser() != null
     }
-
-
-
-
-    // [START declare_auth]
-    private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,27 +75,25 @@ class LoginViewModel : ComponentActivity() {
         auth = Firebase.auth
         // [END initialize_auth]
     }
-    fun signupBtnLink(context: Context){
-        val intent = Intent(context, Signup::class.java)
-        context.startActivity(intent)
 
-    }
-
+    val inProgress = mutableStateOf(false)
+    val userData = mutableStateOf<UserData?>(null)
+    val popupNotification = mutableStateOf<Event<String>?>(null)
 
 
     fun createUserWithEmailAndPassword() {
         Firebase.auth.createUserWithEmailAndPassword(userEmail.value, password.value)
-            .addOnCompleteListener(this) { task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-
-                    Log.d(TAG, "createUserWithEmail:success")
+                    createOrUpdateProfile(username = userName.value)
                 } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                // email already in use
+                        _error.value = "Email er allerede i bruk"
+                        Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
+            }
+
                 }
             }
-        // [END create_user_with_email]
-    }
 
     fun signInWithEmailAndPassword() {
         Firebase.auth.signInWithEmailAndPassword(userEmail.value, password.value)
@@ -95,8 +102,9 @@ class LoginViewModel : ComponentActivity() {
                     Log.d(TAG, "signInWithEmail:success")
                 } else {
                     // If sign in fails, display a message to the user.
-                    _error.value = task.exception?.localizedMessage ?: "Unknown error"
+                    _error.value = "Feil brukernavn eller password"
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
+
                 }
             }
     }
@@ -115,6 +123,79 @@ class LoginViewModel : ComponentActivity() {
         return true
     }
 
+
+    private fun createOrUpdateProfile(
+        username: String? = null,
+        imageUrl: String? = null
+    ){
+        val uid = Firebase.auth.currentUser?.uid
+        val userData = UserData(
+            userID = uid,
+            username = username ?: userName.value,
+            imageUrl = imageUrl ?: userData.value?.imageUrl
+        )
+        uid?.let { uid ->
+            inProgress.value = true
+            db.collection(USERS).document(uid).get().addOnSuccessListener {
+                if (it.exists()) {
+                    it.reference.update(userData.toMap())
+                        .addOnSuccessListener {
+                            this.userData.value = userData
+                            inProgress.value = false
+                        }
+                        .addOnFailureListener{
+                            handleException(it, "Cannot update user")
+                            Log.d(ContentValues.TAG, "Bruker eksisterer, kan ikke oppdatere")
+                            inProgress.value = false
+                        }
+                } else {
+                    db.collection(USERS).document(uid).set(userData)
+                    getUserData(uid)
+                    inProgress.value = false
+                }
+            }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Kan ikke lage bruker")
+                    Log.d(ContentValues.TAG, "Kan ikke lage bruker!")
+                    inProgress.value = false
+                }
+        }
+
+    }
+
+    private fun getUserData(uid: String) {
+
+    }
+
+    private fun handleException(exception: Exception? = null, customMessage: String = ""){
+                    exception?.printStackTrace()
+                    val errorMessage = exception?.localizedMessage ?: ""
+                    val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
+                    popupNotification.value = Event(message)
+                }
+    @Composable
+    fun ErrorField() {
+        Text(
+            text = _error.value,
+            modifier = Modifier.fillMaxWidth(),
+            color = Color.Red,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if(currentUser != null){
+            reload();
+        }
+    }
+
+    fun reload() {
+
+    }
 
 
      fun signOut() {

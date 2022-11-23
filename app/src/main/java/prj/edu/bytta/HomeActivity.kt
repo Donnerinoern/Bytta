@@ -79,7 +79,8 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel, navC
              Button (
                  content = { Text(text = stringResource(R.string.loggut))},
                  onClick = { viewModel.signOut()
-                     navController.navigate("login_screen")
+                     val intent = Intent(context, SignIn::class.java)
+                     context.startActivity(intent)
                  }
                      )
     },
