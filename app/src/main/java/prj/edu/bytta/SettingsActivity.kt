@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import prj.edu.bytta.main.MinePosts
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 class SettingsActivity : ComponentActivity() {
@@ -76,7 +77,7 @@ fun TopAppbarSettings(context: Context) {
 
         navigationIcon = {
             IconButton(onClick = {
-                val intent = Intent(context, ProfileActivity::class.java)
+                val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)            }) {
                 androidx.compose.material3.Icon(
                     Icons.Filled.ArrowBack,
