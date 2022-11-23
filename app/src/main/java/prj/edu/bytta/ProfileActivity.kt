@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,10 +34,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.Preferences
+
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import prj.edu.bytta.StoreUserEmail.Companion.USER_EMAIL_KEY
+
 
 
 class ProfileActivity : ComponentActivity() {
@@ -52,13 +58,13 @@ class ProfileActivity : ComponentActivity() {
                 ) {
                     TopAppbarProfile(context = LocalContext.current.applicationContext)
                     ProfileCard()
-
                 }
             }
         }
     }
 }
 private val optionsList: ArrayList<OptionsData> = ArrayList()
+
 
 
 
@@ -116,7 +122,8 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
 
             item {
                 // User's image, name, email and edit button
-                UserDetails(context = context)
+                UserDetails( viewModel = LoginViewModel())
+
             }
 
             // Show the options
@@ -130,7 +137,10 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
 }
 
     @Composable
-    fun UserDetails(context: Context) {
+    fun UserDetails( viewModel: LoginViewModel) {
+        val user = Firebase.auth.currentUser
+
+
         val imageUri = rememberSaveable { mutableStateOf("") }
         val painter = rememberAsyncImagePainter(
             if (imageUri.value.isEmpty())
@@ -145,62 +155,65 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
             uri?.let { imageUri.value = it.toString() }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Image(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .size(32.dp),
-
-                painter = painterResource(id = R.drawable.ic_user),
-                contentDescription = "Ditt profilbilde",
 
 
-            )
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
+
+                Image(
                     modifier = Modifier
-                        .weight(weight = 3f, fill = false)
-                        .padding(start = 16.dp)
+                        .wrapContentSize()
+                        .size(32.dp),
 
+                    painter = painterResource(id = R.drawable.ic_user),
+                    contentDescription = "Ditt profilbilde",
+
+
+                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(weight = 3f, fill = false)
+                            .padding(start = 16.dp)
 
-                    // User's name
-                  Text (
-                      text = "Kristian Andersen",
-                      style = TextStyle(
-                          letterSpacing = (0.8).sp
-                      ),
-                      maxLines = 1,
+                    ) {
 
-                      )
-
-
-
-                    Spacer(modifier = Modifier.height(2.dp))
-
-                    // User's email
-                    val dataStore = StoreUserEmail(context)
-                    val userEmail = dataStore.getEmail.collectAsState(initial = "")
-                    userEmail.value?.let {
+                        // User's name
                         Text(
-                            text = it,
+                            text = "Kristian",
                             style = TextStyle(
                                 letterSpacing = (0.8).sp
                             ),
                             maxLines = 1,
 
                             )
-                    }
+
+
+                        Spacer(modifier = Modifier.height(2.dp))
+
+
+                        if (user != null) {
+                            user.email?.let {
+                                Text(
+                                    text = it,
+                                    style = TextStyle(
+                                        letterSpacing = (0.8).sp
+                                    ),
+                                    maxLines = 1,
+
+                                    )
+                            }
+                        }
+
+
                 }
 
                 val context = LocalContext.current
@@ -212,6 +225,7 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
                         val intent = Intent(context, EditProfileActivity::class.java)
                         context.startActivity(intent)
 
+
                     }) {
                     Icon(
                         modifier = Modifier.size(24.dp),
@@ -221,8 +235,8 @@ fun ProfileCard(context: Context = LocalContext.current.applicationContext) {
                     )
                 }
             }
+            }
         }
-    }
 
 
 
@@ -270,7 +284,9 @@ private fun OptionsItemStyle(item: OptionsData, context: Context) {
                     )
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier
+                    .height(2.dp)
+                    .background(color = Color.Red))
 
                 // Sub title
                 Text(
@@ -301,7 +317,6 @@ private fun prepareOptionsData() {
 
     optionsList.add(
         OptionsData(
-
             icon = appIcons.Person,
             title = "Konto",
             subTitle = "",
@@ -314,7 +329,7 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.ShoppingCart,
             title = "Dine byttehandler",
-            subTitle = ""
+            subTitle = "Se alle dine byttehandler"
         )
     )
 
@@ -323,7 +338,7 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.Settings,
             title = "Innstillinger",
-            subTitle = ""
+            subTitle = "Tilpass dine innstillinger"
 
         )
     )
@@ -334,12 +349,13 @@ private fun prepareOptionsData() {
         OptionsData(
             icon = appIcons.Star,
             title = "Favoritter",
-            subTitle = ""
+            subTitle = "Se hvilke byttehandler du har likt"
         )
     )
 }
 
 data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String)
+
 
 @Preview(showBackground = true)
 @Composable
