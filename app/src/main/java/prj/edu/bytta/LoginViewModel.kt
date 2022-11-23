@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
@@ -23,7 +22,7 @@ import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 
 
-const val USERS = "users"
+
 
 class LoginViewModel : ComponentActivity() {
 
