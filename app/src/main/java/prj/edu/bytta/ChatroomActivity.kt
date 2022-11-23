@@ -35,7 +35,7 @@ class ChatroomActivity: ComponentActivity() {
                 ) {
                 }*/
                 MessageActivity()
-
+                ChatPage(viewModel = LoginViewModel())
             }
         }
     }
@@ -64,18 +64,18 @@ fun Chatroom() {
 }
 @Composable
 fun Test() {
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
+    UserCard(TradeData("Morten", "Basskasse", ""))
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,7 +108,7 @@ fun ChatPage(viewModel: LoginViewModel) {
     )
     val intents = listOf(
         HomeActivity::class.java,
-        ProfileActivity::class.java,
+        EditProfileActivity::class.java,
         ChatroomActivity::class.java
     )
     Scaffold(

@@ -24,7 +24,7 @@ fun NavBar() {
     val intents = listOf(
         EditProfileActivity::class.java,
         HomeActivity::class.java,
-        MessageActivity::class.java
+        ChatroomActivity::class.java
     )
     BottomAppBar {
         NavigationBar() {

@@ -52,7 +52,7 @@ fun SingleMessage(message: String, isCurrentUser: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserCard(trade: Trade,) {
+fun UserCard(trade: TradeData,) {
     val context = LocalContext.current
     Spacer(modifier = Modifier.height(5.dp))
     Card(
@@ -77,69 +77,16 @@ fun UserCard(trade: Trade,) {
             )
             Spacer(modifier = Modifier.width(5.dp))
             Column {
-                Text(text = trade.user)
+                Text(text = trade.user!!)
                 // Add a vertical space between the author and message texts
                 Spacer(modifier = Modifier.height(5.dp))
-                Text(text = trade.item)
+                Text(text = trade.item!!)
                 Spacer(modifier = Modifier.height(5.dp))
 
             }
         }
 
        }
-}
-
-@Composable
-fun TopBarDetails(
-    selectedUserDetails: User,
-    back: () -> Unit
-) {
-    val focusManager = LocalFocusManager.current
-
-    Card(
-
-        shape = RoundedCornerShape(0),
-    ) {
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(65.dp)
-        )
-        {
-            AsyncImage(
-                model = ImageRequest.Builder(
-                    LocalContext.current).data(selectedUserDetails.profilePic),
-
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                )
-
-
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    BackButton(
-                        back = {
-                            back()
-                            focusManager.clearFocus()
-                        },
-                        icon = Icons.Default.ArrowBack,
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -171,65 +118,3 @@ fun BackButton(back: () -> Unit, icon: ImageVector, ) {
         }
     }
 }
-
-@Composable
-fun SingelMessage(message: MessageDetails) {
-    Row(
-        horizontalArrangement = if(message.messageByCurrentUser)
-            Arrangement.End else Arrangement.Start,
-        modifier = Modifier
-            .fillMaxWidth(
-                if (message.messageByCurrentUser) 1f
-                else 0.5f
-            )
-            .padding(bottom = 10.dp)
-    ) {
-        if (message.messageByCurrentUser)
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = if (message.messageByCurrentUser) MaterialTheme.colorScheme.primary else Color.White,
-
-            ),
-                shape = RoundedCornerShape(30),
-            ) {
-                Text(
-                    text = message.message,
-                    textAlign = if (message.messageByCurrentUser) TextAlign.End
-                    else
-                        TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    color = if (!message.messageByCurrentUser) MaterialTheme.colorScheme.primary else Color.White)
-
-            }
-    }
-}
-
-@Composable
-fun Boxern(
-    size: Int? = null,
-    height: Int? = null,
-    width: Int? = null,
-) {
-    val fix = size != null || height != null || width != null
-    
-    if (fix) {
-        if (size != null) {
-            Spacer(modifier = Modifier.size(size.dp))
-        } else if (height != null && width != null){
-            Spacer(modifier = Modifier
-                .height(height.dp)
-                .width(width.dp)
-            )
-        } else if(height != null){
-            Spacer(modifier = Modifier.height(height.dp))
-        } else if (width != null){
-            Spacer(modifier = Modifier.width(width.dp))
-        }else {
-            Spacer(modifier = Modifier.fillMaxSize(1f))
-        }
-    }
-}
-
-
