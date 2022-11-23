@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import androidx.compose.runtime.getValue
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -12,8 +13,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -26,12 +29,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import prj.edu.bytta.main.CommonDivider
+import prj.edu.bytta.main.CommonImage
+import prj.edu.bytta.main.CommonProgressSpinner
+import prj.edu.bytta.main.MinePosts
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
-class EditProfileActivity : ComponentActivity()  {
+class EditProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -42,8 +52,14 @@ class EditProfileActivity : ComponentActivity()  {
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
-                    TopAppbarEditProfile(context = LocalContext.current.applicationContext)
-                    EditProfilePage(viewModel = ProfileViewmodel())
+
+                    ProfileScreen(
+                        viewModel = SignupViewmodel(
+                            FirebaseAuth.getInstance(),
+                            FirebaseFirestore.getInstance(),
+                            FirebaseStorage.getInstance()
+                        )
+                    )
 
                 }
             }
@@ -51,132 +67,128 @@ class EditProfileActivity : ComponentActivity()  {
     }
 }
 
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppbarEditProfile(context: Context) {
-    val context = LocalContext.current
-    TopAppBar(
+fun ProfileScreen(viewModel: SignupViewmodel) {
+    val isLoading = viewModel.inProgress.value
+    if (isLoading) {
+        CommonProgressSpinner()
+    } else {
+        val userData = viewModel.userData.value
+        var username by rememberSaveable { mutableStateOf(userData?.username ?: "") }
 
-        title = {
-
-            Text(text = "Rediger profil", maxLines = 1,) },
-
-        navigationIcon = {
-            IconButton(onClick = {
-                val intent = Intent(context, ProfileActivity::class.java)
+        val context = LocalContext.current
+        ProfileContent(
+            viewModel = SignupViewmodel(
+                FirebaseAuth.getInstance(),
+                FirebaseFirestore.getInstance(),
+                FirebaseStorage.getInstance()
+            ),
+            username = username,
+            onUsernameChange = { username = it },
+            onSave = { viewModel.updateProfileData(username) },
+            onBack = {
+                val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
-            }) {
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "Gå tilbake",
-                )
-            }
-        }
-    )
+            },
+            onLogout = {}
+        )
+
+
+    }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfilePage(context: Context = LocalContext.current.applicationContext, viewModel: ProfileViewmodel) {
-    val user = Firebase.auth.currentUser
-    val email = viewModel._userEmail.value
+fun ProfileContent(
+    viewModel: SignupViewmodel,
+    username: String,
+    onUsernameChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onBack: () -> Unit,
+    onLogout: () -> Unit
 
-    ProfileImage(context = context)
+) {
+    val scrollState = rememberScrollState()
+    val imageUrl = viewModel.userData.value?.imageUrl
+
     Column(
         modifier = Modifier
-            .padding(20.dp)
-            .fillMaxSize(),
-
-        horizontalAlignment = Alignment.CenterHorizontally
-
+            .verticalScroll(scrollState)
+            .padding(8.dp)
     ) {
-
-        var text by remember { mutableStateOf("") }
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType
-                = KeyboardType.Email
-            ),
-
-            label = {
-                Text(text = "Email")
-            }
-        )
-/*
-        OutlinedTextField(
-            value = userInputText,
-            onValueChange = {newText ->
-                userInputText = newText
-            },
-            label = {
-                Text(text = "Passord")
-            }
-        )
-*/
-        Button(onClick = {
-            viewModel.updateEmail(email)
-
-            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-
-        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Lagre endringer")
+            Text(text = "Tilbake", modifier = Modifier.clickable { onBack.invoke() })
+            Text(text = "Lagre", modifier = Modifier.clickable { onSave.invoke() })
         }
 
+        CommonDivider()
 
+        ProfileImage(imageUrl = imageUrl, viewModel = SignupViewmodel(  FirebaseAuth.getInstance(),
+            FirebaseFirestore.getInstance(),
+            FirebaseStorage.getInstance()) )
 
+        CommonDivider()
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
+            OutlinedTextField(value = username, onValueChange = onUsernameChange)
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(text = "Logg ut", modifier = Modifier.clickable { onLogout.invoke() })
+        }
     }
 }
-
 
 
 @Composable
-fun ProfileImage(context: Context) {
-    val imageUri = rememberSaveable { mutableStateOf("") }
-    val painter = rememberAsyncImagePainter(
-        if (imageUri.value.isEmpty())
-            R.drawable.ic_user
-        else
-            imageUri.value
-    )
+fun ProfileImage(imageUrl: String?, viewModel: SignupViewmodel) {
+
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { imageUri.value = it.toString() }
+        contract = ActivityResultContracts.GetContent(),
+    ){uri: Uri? ->
+
+        uri?.let { viewModel.uploadProfileImage(uri) }
     }
 
-    Column (
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card (
-            shape = CircleShape,
+    Box(modifier = Modifier.height(IntrinsicSize.Min)) {
+        Column(
             modifier = Modifier
                 .padding(8.dp)
-                .size(100.dp)
-                ){
-            Image(painter = painter,
-                  contentDescription = "Profilbilde",
-                  modifier = Modifier
-                      .wrapContentSize()
-                      .clickable { launcher.launch("image/*") },
-                  contentScale = ContentScale.Crop
-
-            )
+                .fillMaxWidth()
+                .clickable { launcher.launch("image/*") },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(100.dp)
+            ) {
+                CommonImage(data = imageUrl)
+            }
+            Text(text = "Endre profilbilde")
         }
 
-        Text(text = "Endre profilbilde")
-
+        val isLoading = viewModel.inProgress.value
+        if (isLoading)
+            CommonProgressSpinner()
     }
-
-
-
 }
-

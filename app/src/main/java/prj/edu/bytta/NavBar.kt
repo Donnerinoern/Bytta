@@ -22,7 +22,7 @@ fun NavBar() {
         Icons.Default.Email
     )
     val intents = listOf(
-        ProfileActivity::class.java,
+        EditProfileActivity::class.java,
         HomeActivity::class.java,
         MessageActivity::class.java
     )
