@@ -21,6 +21,7 @@ class LoginViewModel : ComponentActivity() {
     val userEmail: State<String> = _userEmail
     private val _password = mutableStateOf("")
     val password: State<String> = _password
+
     // Setters
     fun setUserEmail(email: String) {
         _userEmail.value = email
