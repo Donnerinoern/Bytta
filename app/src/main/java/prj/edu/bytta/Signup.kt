@@ -1,5 +1,7 @@
 package prj.edu.bytta
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -21,10 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -45,7 +49,7 @@ class Signup: ComponentActivity() {
                 ) {
 
                     SignupScreen(
-                        viewModel = SignupViewmodel(
+                        vm = SignupViewmodel(
                             auth = Firebase.auth,
                             db = Firebase.firestore,
                             storage = Firebase.storage
@@ -59,8 +63,8 @@ class Signup: ComponentActivity() {
 
 
     @Composable
-    fun SignupScreen(viewModel: SignupViewmodel) {
-
+    fun SignupScreen(vm: SignupViewmodel) {
+        val context = LocalContext.current
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
@@ -111,13 +115,15 @@ class Signup: ComponentActivity() {
                 )
                 Button(
                     onClick = {
-                        viewModel.onSignup(
+                        vm.onSignup(
                             usernameState.value.text,
                             emailState.value.text,
                             passwordState.value.text,
-
-
                             )
+
+                        val intent = Intent(context, HomeActivity::class.java)
+                        context.startActivity(intent)
+
                     },
                     modifier = Modifier.padding(8.dp)
                 ) {

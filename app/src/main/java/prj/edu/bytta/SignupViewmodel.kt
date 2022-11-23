@@ -1,6 +1,8 @@
 package prj.edu.bytta
 
 import android.content.ContentValues
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -8,25 +10,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
+import java.util.UUID
 import javax.inject.Inject
 
 const val USERS = "users"
 
 class SignupViewmodel(
-
     var auth: FirebaseAuth,
-
     val db: FirebaseFirestore,
-
     val storage: FirebaseStorage
-
 )  : ViewModel() {
 
 
@@ -37,7 +38,13 @@ class SignupViewmodel(
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf <Event<String>?>(null)
 
-
+    init {
+        val currentUser = auth.currentUser
+        signedIn.value = currentUser != null
+        currentUser?.uid?.let{ uid ->
+            getUserData(uid)
+        }
+    }
 
 
 
@@ -106,8 +113,25 @@ class SignupViewmodel(
     }
 
     private fun getUserData(uid: String) {
+        inProgress.value = true
+        db.collection(USERS).document(uid).get()
+            .addOnSuccessListener {
+                val user = it.toObject<UserData>()
+                userData.value = user
+                inProgress.value = false
+
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot retrieve user data")
+                inProgress.value = false
+            }
 
     }
+
+    fun signOut() {
+        Firebase.auth.signOut()
+    }
+
 
     private fun handleException(exception: Exception? = null, customMessage: String = ""){
         exception?.printStackTrace()
@@ -115,4 +139,32 @@ class SignupViewmodel(
         val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
         popupNotification.value = Event(message)
     }
+
+    fun updateProfileData(username: String){
+        createOrUpdateProfile(username)
+    }
+
+    private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
+        inProgress.value = true
+
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("images/$uuid")
+        val uploadTask = imageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            val result = it.metadata?.reference?.downloadUrl
+            result?.addOnSuccessListener(onSuccess)
+        }
+            .addOnFailureListener{exc ->
+                handleException(exc)
+                inProgress.value = false
+            }
+    }
+    fun uploadProfileImage(uri: Uri){
+        uploadImage(uri){
+            createOrUpdateProfile(imageUrl = it.toString())
+        }
+    }
+
 }

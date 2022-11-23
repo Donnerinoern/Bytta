@@ -43,7 +43,7 @@ fun MessageView(
                 message -> val isCurrentuser = message[MeldingKonstanter.BRUKER] as Boolean
 
                 SingleMessage(
-                    message = message[MeldingKonstanter.MELDING].toString(),
+                    message = message[MeldingKonstanter.MELDINGER].toString(),
                     isCurrentUser = isCurrentuser
                 )
             }
