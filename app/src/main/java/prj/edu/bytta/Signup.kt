@@ -1,3 +1,4 @@
+/*
 package prj.edu.bytta
 
 import android.content.Context
@@ -144,4 +145,4 @@ class Signup: ComponentActivity() {
     }
 }
 
-
+*/

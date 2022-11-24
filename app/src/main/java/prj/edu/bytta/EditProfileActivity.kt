@@ -1,6 +1,7 @@
 package prj.edu.bytta
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -54,10 +55,8 @@ class EditProfileActivity : ComponentActivity() {
                     ) {
 
                     ProfileScreen(
-                        viewModel = SignupViewmodel(
-                            FirebaseAuth.getInstance(),
-                            FirebaseFirestore.getInstance(),
-                            FirebaseStorage.getInstance()
+                        viewModel = LoginViewModel(
+
                         )
                     )
 
@@ -68,7 +67,7 @@ class EditProfileActivity : ComponentActivity() {
 }
 
 @Composable
-fun ProfileScreen(viewModel: SignupViewmodel) {
+fun ProfileScreen(viewModel: LoginViewModel ) {
     val isLoading = viewModel.inProgress.value
     if (isLoading) {
         CommonProgressSpinner()
@@ -78,10 +77,8 @@ fun ProfileScreen(viewModel: SignupViewmodel) {
 
         val context = LocalContext.current
         ProfileContent(
-            viewModel = SignupViewmodel(
-                FirebaseAuth.getInstance(),
-                FirebaseFirestore.getInstance(),
-                FirebaseStorage.getInstance()
+            viewModel = LoginViewModel(
+
             ),
             username = username,
             onUsernameChange = { username = it },
@@ -101,7 +98,7 @@ fun ProfileScreen(viewModel: SignupViewmodel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileContent(
-    viewModel: SignupViewmodel,
+    viewModel: LoginViewModel,
     username: String,
     onUsernameChange: (String) -> Unit,
     onSave: () -> Unit,
@@ -110,7 +107,7 @@ fun ProfileContent(
 
 ) {
     val scrollState = rememberScrollState()
-    val imageUrl = viewModel.userData.value?.imageUrl
+    val imageUrl = viewModel.userData?.value?.imageUrl
 
     Column(
         modifier = Modifier
@@ -129,9 +126,7 @@ fun ProfileContent(
 
         CommonDivider()
 
-        ProfileImage(imageUrl = imageUrl, viewModel = SignupViewmodel(  FirebaseAuth.getInstance(),
-            FirebaseFirestore.getInstance(),
-            FirebaseStorage.getInstance()) )
+        ProfileImage(imageUrl = imageUrl, viewModel = LoginViewModel())
 
         CommonDivider()
 
@@ -159,7 +154,7 @@ fun ProfileContent(
 
 
 @Composable
-fun ProfileImage(imageUrl: String?, viewModel: SignupViewmodel) {
+fun ProfileImage(imageUrl: String?, viewModel: LoginViewModel) {
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
