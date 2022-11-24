@@ -12,8 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -147,9 +145,8 @@ fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavContro
         onClick = {
                 viewModel.signInWithEmailAndPassword()
                 if (user != null) {
-                    val intent = Intent(context, HomeActivity::class.java)
-                    context.startActivity(intent)
-                        Toast.makeText(
+                    navController.navigate("home_screen")
+                    Toast.makeText(
                             context,
                             "Velkommen" ,
                             Toast.LENGTH_SHORT

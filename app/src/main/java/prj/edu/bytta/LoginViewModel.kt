@@ -1,12 +1,9 @@
-
 package prj.edu.bytta
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
@@ -19,22 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
-import java.util.*
 
-
-const val USERS = "users"
-
-class LoginViewModel  : ComponentActivity() {
+class LoginViewModel : ComponentActivity() {
 
     private var db = Firebase.firestore
-    private var storage = Firebase.storage
 
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
@@ -56,11 +45,6 @@ class LoginViewModel  : ComponentActivity() {
     fun setUserName(username: String) {
         _userName.value = username
     }
-
-    fun getUserName(username: String) {
-        _userName.value = username
-    }
-
 
     fun setUserEmail(email: String) {
         _userEmail.value = email
@@ -84,17 +68,13 @@ class LoginViewModel  : ComponentActivity() {
 
         // [START initialize_auth]
         // Initialize Firebase Auth
-       // auth = Firebase.auth
-
+        auth = Firebase.auth
         // [END initialize_auth]
     }
 
-    val signedIn = mutableStateOf(false)
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf<Event<String>?>(null)
-
-
 
 
     fun createUserWithEmailAndPassword() {
@@ -139,31 +119,6 @@ class LoginViewModel  : ComponentActivity() {
         return true
     }
 
-    fun onSignup(username: String, email: String, password: String){
-        inProgress.value = true
-
-        db.collection(USERS).whereEqualTo("username", username).get()
-            .addOnSuccessListener { documents ->
-                if(documents.size() > 0) {
-                    //handleException(customMessage = "Username already exists")
-
-                    inProgress.value = false
-                } else {
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener{task ->
-                            if (task.isSuccessful) {
-                                signedIn.value = true
-                                createOrUpdateProfile(username = username)
-                            } else {
-                                handleException(task.exception, "Registrering feilet!")
-                            }
-                            inProgress.value = false
-                        }
-                }
-            }
-            .addOnFailureListener{  }
-    }
-
 
     private fun createOrUpdateProfile(
         username: String? = null,
@@ -205,21 +160,8 @@ class LoginViewModel  : ComponentActivity() {
     }
 
     private fun getUserData(uid: String) {
-        inProgress.value = true
-        db.collection(USERS).document(uid).get()
-            .addOnSuccessListener {
-                val user = it.toObject<UserData>()
-                userData.value = user
-                inProgress.value = false
-
-            }
-            .addOnFailureListener { exc ->
-                handleException(exc, "Cannot retrieve user data")
-                inProgress.value = false
-            }
 
     }
-
 
     private fun handleException(exception: Exception? = null, customMessage: String = ""){
                     exception?.printStackTrace()
@@ -227,11 +169,6 @@ class LoginViewModel  : ComponentActivity() {
                     val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
                     popupNotification.value = Event(message)
                 }
-
-
-    fun updateProfileData(username: String){
-        createOrUpdateProfile(username)
-    }
     @Composable
     fun ErrorField() {
         Text(
@@ -250,36 +187,7 @@ class LoginViewModel  : ComponentActivity() {
      fun signOut() {
          Firebase.auth.signOut()
     }
-
-
-
-    private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
-        inProgress.value = true
-
-        val storageRef = storage.reference
-        val uuid = UUID.randomUUID()
-        val imageRef = storageRef.child("images/$uuid")
-        val uploadTask = imageRef.putFile(uri)
-
-        uploadTask.addOnSuccessListener {
-            val result = it.metadata?.reference?.downloadUrl
-            result?.addOnSuccessListener(onSuccess)
-        }
-            .addOnFailureListener{exc ->
-                handleException(exc)
-                inProgress.value = false
-            }
-    }
-    fun uploadProfileImage(uri: Uri){
-        uploadImage(uri){
-            createOrUpdateProfile(imageUrl = it.toString())
-        }
-    }
-
 }
-
-
-
 
 
 

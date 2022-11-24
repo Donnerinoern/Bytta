@@ -1,4 +1,3 @@
-/*
 package prj.edu.bytta
 
 import android.content.ContentValues
@@ -113,10 +112,6 @@ class SignupViewmodel(
 
     }
 
-
-
-
-
     private fun getUserData(uid: String) {
         inProgress.value = true
         db.collection(USERS).document(uid).get()
@@ -173,5 +168,3 @@ class SignupViewmodel(
     }
 
 }
-
-*/

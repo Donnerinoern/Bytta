@@ -1,19 +1,15 @@
 package prj.edu.bytta
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -21,26 +17,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import prj.edu.bytta.main.MinePosts
 
-class HomeActivity: ComponentActivity() {
+class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val db = Firebase.firestore
-        var trade: Trade = Trade("error", "error", "error")
-        db.collection("trades")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    trade = Trade(document.get("user") as String, document.get("item") as String, document.get("body") as String)
-                    println(document.get("user"))
-                }
-            }
         super.onCreate(savedInstanceState)
+
         setContent {
             MaterialTheme {
                 // A surface container using the 'background' color from the theme
@@ -49,71 +33,52 @@ class HomeActivity: ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(db, trade, viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
+                Content(ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()), viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
             }
         }
     }
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel, navController: NavController) {
-    val context = LocalContext.current
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("Home", "Profile", "Messages")
-    val icons = listOf(
-        Icons.Default.Home,
-        Icons.Default.Person,
-        Icons.Default.Email
-        )
-    val intents = listOf(
-        HomeActivity::class.java,
-        MinePosts::class.java,
-        MessageActivity::class.java
-    )
-    db.collection("trades")
-        .get()
+fun Content(vm: ByttaViewModel, viewModel: LoginViewModel, navController: NavController) {
+    val tradeDataLoading = vm.inProgress.value
+    val trades = vm.trades.value
+    val tradeFeedLoading = vm.tradesFeedProgress
     Scaffold(
-    topBar = {
-             Button (
-                 content = { Text(text = stringResource(R.string.loggut))},
-                 onClick = { viewModel.signOut()
-                     val intent = Intent(context, Login::class.java)
-                     context.startActivity(intent)
-                 }
-                     )
-    },
+            topBar = {
+                Button (
+                    content = { Text(text = stringResource(R.string.loggut))},
+                    onClick = {
+                        viewModel.signOut()
+                        navController.navigate("login_screen") }
+                )
+            },
         bottomBar = {
-            BottomAppBar {
-                NavigationBar() {
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            icon = {Icon(imageVector = icons[index], contentDescription = items[index])},
-                            label = {Text(item)},
-                            selected = selectedItem == index,
-                            onClick = { selectedItem = index
-                                val intent = Intent(context, intents[index])
-                                context.startActivity(intent)}
-                        )
-                    }
-                }
-            }
+            NavBar()
         }
     ) {
         paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            TradeCard(Trade("Morten", "Basskasse LOLZ", "Prøver å bytte en basskasse shamener. Ønsker ikke noe spesifikt bare kom med tilbud \uD83D\uDE1C"))
-            TradeCard(Trade("Petter Northug", "Ski", "Selger skiene mine :=)"))
-            TradeCard(trade)
+        TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
+    }
+}
+
+@Composable
+fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel, modifier: Modifier) {
+    LazyColumn {
+        items(items = tradeList) {  
+            item -> 
+            TradeCard(trade = item)
         }
+    }
+    if (loading) {
+        Text(text = "Loading...")
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TradeCard(trade: Trade) {
+fun TradeCard(trade: TradeData) {
     Spacer(modifier = Modifier.height(5.dp))
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -134,12 +99,12 @@ fun TradeCard(trade: Trade) {
             Spacer(modifier = Modifier.width(8.dp))
 
             Column {
-                Text(text = trade.user)
+                Text(text = trade.user!!)
                 // Add a vertical space between the author and message texts
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = trade.item)
+                Text(text = trade.item!!)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = trade.body)
+                Text(text = trade.body!!)
             }
         }
     }
