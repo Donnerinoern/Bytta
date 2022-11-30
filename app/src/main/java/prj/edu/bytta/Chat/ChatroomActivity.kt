@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.Chat
 
 
 import android.content.Intent
@@ -22,6 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import prj.edu.bytta.*
+import prj.edu.bytta.R
 
 class ChatroomActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +36,7 @@ class ChatroomActivity: ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                MessageActivity()
+                ChatPage(viewModel = LoginViewModel())
 
             }
         }

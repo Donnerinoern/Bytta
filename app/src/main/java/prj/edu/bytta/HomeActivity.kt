@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.Chat.ChatroomActivity
 
 class HomeActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +72,7 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
     val intents = listOf(
         HomeActivity::class.java,
         ProfileActivity::class.java,
-        MessageActivity::class.java
+        ChatroomActivity::class.java
     )
     db.collection("trades")
         .get()
