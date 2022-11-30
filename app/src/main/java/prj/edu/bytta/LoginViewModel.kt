@@ -17,24 +17,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.firestore.model.Document
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import java.util.*
 
+const val USERS = "users"
+
 class LoginViewModel : ComponentActivity() {
 
     private var db = Firebase.firestore
-    private var storage = Firebase.storage
-
-
-    // [START declare_auth]
+    private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
+
 
     private val _isLoggedIn = mutableStateOf(false)
     val isLoggedIn: State<Boolean> = _isLoggedIn
@@ -69,12 +67,6 @@ class LoginViewModel : ComponentActivity() {
         _isLoggedIn.value = getCurrentUser() != null
     }
 
-    // Getters
-    fun getUserName(username: String) {
-        _userName.value = username
-    }
-
-
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,11 +86,13 @@ class LoginViewModel : ComponentActivity() {
         Firebase.auth.createUserWithEmailAndPassword(userEmail.value, password.value)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    createOrUpdateProfile(username = userName.value)
+                    updateProfile()
+                   // createOrUpdateProfile(username = userName.value)
                 } else {
                 // email already in use
-                        _error.value = "Email er allerede i bruk"
-                        Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
+                    Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
+                    _error.value = "Email er allerede i bruk"
+
             }
 
                 }
@@ -109,10 +103,12 @@ class LoginViewModel : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "signInWithEmail:success")
+                    getCurrentUser()
                 } else {
                     // If sign in fails, display a message to the user.
-                    _error.value = "Feil brukernavn eller password"
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    _error.value = "Feil brukernavn eller password"
+
 
                 }
             }
@@ -120,7 +116,7 @@ class LoginViewModel : ComponentActivity() {
 
         fun getCurrentUser(): FirebaseUser? {
         val user = Firebase.auth.currentUser
-        Log.d(TAG, "user display name: ${user?.displayName}, email: ${user?.email}")
+        Log.d(TAG, "username: ${user?.displayName}, email: ${user?.email}")
         return user
     }
 
@@ -133,7 +129,7 @@ class LoginViewModel : ComponentActivity() {
     }
 
 
-    private fun createOrUpdateProfile(
+  /*  fun createOrUpdateProfile(
         username: String? = null,
         imageUrl: String? = null
     ){
@@ -172,50 +168,26 @@ class LoginViewModel : ComponentActivity() {
 
     }
 
+*/
+  fun updateProfile() {
+
+      val user = Firebase.auth.currentUser
+
+      val profileUpdates = userProfileChangeRequest {
+          displayName = userName.value
+          photoUri = Uri.parse("")
+      }
+
+      user!!.updateProfile(profileUpdates)
+          .addOnCompleteListener { task ->
+              if (task.isSuccessful) {
+                  Log.d(TAG, "User profile updated.")
+              }
+          }
+  }
+
     private fun getUserData(uid: String) {
-        inProgress.value = true
-        db.collection(USERS).document(uid).get()
-            .addOnSuccessListener {
-                val user = it.toObject<UserData>()
-                userData.value = user
-                inProgress.value = false
 
-            }
-            .addOnFailureListener { exc ->
-                handleException(exc, "Cannot retrieve user data")
-                inProgress.value = false
-            }
-
-    }
-
-    private fun handleException(exception: Exception? = null, customMessage: String = ""){
-                    exception?.printStackTrace()
-                    val errorMessage = exception?.localizedMessage ?: ""
-                    val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
-                    popupNotification.value = Event(message)
-                }
-    @Composable
-    fun ErrorField() {
-        Text(
-            text = _error.value,
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.Red,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-    fun reload() {
-
-    }
-
-
-     fun signOut() {
-
-         Firebase.auth.signOut()
-    }
-
-    fun updateProfileData(username: String){
-        createOrUpdateProfile(username)
     }
 
     private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
@@ -235,19 +207,42 @@ class LoginViewModel : ComponentActivity() {
                 inProgress.value = false
             }
     }
-    fun uploadProfileImage(uri: Uri){
-
+   /* fun uploadProfileImage(uri: Uri){
         uploadImage(uri){
             createOrUpdateProfile(imageUrl = it.toString())
         }
     }
 
+*/
+
+    private fun handleException(exception: Exception? = null, customMessage: String = ""){
+                    exception?.printStackTrace()
+                    val errorMessage = exception?.localizedMessage ?: ""
+                    val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
+                    popupNotification.value = Event(message)
+                }
+
+    @Composable
+    fun ErrorField() {
+        Text(
+            text = _error.value,
+            modifier = Modifier.fillMaxWidth(),
+            color = Color.Red,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
 
 
 
+    fun reload() {
+
+    }
 
 
-
+     fun signOut() {
+         Firebase.auth.signOut()
+    }
 }
 
 

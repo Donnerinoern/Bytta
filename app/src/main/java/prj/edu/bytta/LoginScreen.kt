@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.data.UserData
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
@@ -42,30 +43,25 @@ class Login: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginScreen(viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
+                    LoginScreen(
+                        viewModel = LoginViewModel(),
+                        navController = NavController(context = LocalContext.current))
                 }
             }
         }
 
     }
-    public override fun onStart() {
-        super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = Firebase.auth.currentUser
-        if(currentUser != null){
-            reload();
-        }
-    }
-    private fun reload() {
 
-    }
 }
 
 
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, navController: NavController) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    navController: NavController) {
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -97,7 +93,9 @@ fun Icon() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EmailField(viewModel: LoginViewModel) {
+fun EmailField(
+    viewModel: LoginViewModel) {
+
     val userEmail = viewModel.userEmail.value
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -115,7 +113,9 @@ fun EmailField(viewModel: LoginViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordField(viewModel: LoginViewModel) {
+fun PasswordField(
+    viewModel: LoginViewModel) {
+
     val password = viewModel.password.value
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -133,7 +133,10 @@ fun PasswordField(viewModel: LoginViewModel) {
 }
 
 @Composable
-fun ButtonEmailPasswordLogin(viewModel: LoginViewModel, navController: NavController) {
+fun ButtonEmailPasswordLogin(
+    viewModel: LoginViewModel,
+    navController: NavController) {
+
     val context = LocalContext.current
     val user = Firebase.auth.currentUser
     Button(

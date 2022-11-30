@@ -18,25 +18,32 @@ import com.google.firebase.ktx.Firebase
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun Navigation(){
-    var navController = rememberNavController()
+    val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "login_screen", builder = {
+    NavHost(
+        navController = navController,
+        startDestination = "login_screen",
+        builder = {
 
-        composable("login_screen", content = { LoginScreen(
+        composable(
+            "login_screen", content = { LoginScreen(
             navController = navController,
             viewModel = LoginViewModel()
         )
         })
-        composable("register_screen", content = { RegisterScreen(
+        composable(
+            "register_screen", content = { RegisterScreen(
             navController = navController,
             viewModel = LoginViewModel()
         )
         })
-        composable("tilbake_knapp", content = { TilbakeKnapp(
+        composable(
+            "tilbake_knapp", content = { TilbakeKnapp(
             navController = navController
         )
         })
-         composable("home_screen", content = { Content(
+         composable(
+             "home_screen", content = { Content(
             navController = navController,
             vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()),
             viewModel = LoginViewModel()
