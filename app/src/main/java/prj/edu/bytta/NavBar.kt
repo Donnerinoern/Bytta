@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import prj.edu.bytta.main.MinePosts
 
 @Composable
 fun NavBar() {
@@ -22,7 +23,7 @@ fun NavBar() {
         Icons.Default.Email
     )
     val intents = listOf(
-        EditProfileActivity::class.java,
+        MinePosts::class.java,
         HomeActivity::class.java,
         MessageActivity::class.java
     )

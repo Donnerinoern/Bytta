@@ -71,7 +71,7 @@ class MinePosts : ComponentActivity() {
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value
         val context = LocalContext.current
-
+        val user = Firebase.auth.currentUser
 
         Column {
 
@@ -119,9 +119,9 @@ class MinePosts : ComponentActivity() {
                 }
 
                 Column(modifier = Modifier.padding(8.dp)) {
-                    val usernameDisplay =
-                        if (userData?.username == null) "ikke en dritt bro" else "@${userData?.username}"
-                    Text(text = usernameDisplay)
+
+
+                    user?.displayName?.let { Text(text = it) }
                 }
 
 

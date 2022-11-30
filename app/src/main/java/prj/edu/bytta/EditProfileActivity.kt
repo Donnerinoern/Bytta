@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -25,8 +26,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -35,6 +38,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.main.CommonDivider
 import prj.edu.bytta.main.CommonImage
 import prj.edu.bytta.main.CommonProgressSpinner
@@ -82,7 +86,7 @@ fun ProfileScreen(viewModel: LoginViewModel ) {
             ),
             username = username,
             onUsernameChange = { username = it },
-            onSave = { viewModel.updateProfileData(username) },
+            onSave = { viewModel.updateProfile() },
             onBack = {
                 val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
@@ -107,7 +111,8 @@ fun ProfileContent(
 
 ) {
     val scrollState = rememberScrollState()
-    val imageUrl = viewModel.userData?.value?.imageUrl
+    val imageUrl = viewModel.userData.value?.imageUrl
+    val userName = viewModel.userName.value
 
     Column(
         modifier = Modifier
@@ -137,7 +142,16 @@ fun ProfileContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
-            OutlinedTextField(value = username, onValueChange = onUsernameChange)
+            OutlinedTextField(
+                value = userName,
+                label = { Text(text = stringResource(R.string.username)) },
+                onValueChange = { viewModel.setUserName(it) },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(8.dp),
+            )
         }
 
         Row(
@@ -160,7 +174,7 @@ fun ProfileImage(imageUrl: String?, viewModel: LoginViewModel) {
         contract = ActivityResultContracts.GetContent(),
     ){uri: Uri? ->
 
-        uri?.let { viewModel.uploadProfileImage(uri) }
+        uri?.let {  }
     }
 
     Box(modifier = Modifier.height(IntrinsicSize.Min)) {
