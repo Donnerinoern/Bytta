@@ -1,12 +1,7 @@
 /*
 package prj.edu.bytta
 
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -30,42 +25,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import prj.edu.bytta.ui.theme.ByttaTheme
 
-class Signup: ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-
-            ByttaTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-
-                    SignupScreen(
-                        vm = SignupViewmodel(
-                            auth = Firebase.auth,
-                            db = Firebase.firestore,
-                            storage = Firebase.storage
-                        )
-                    )
-                }
-            }
-        }
-
-    }
 
 
     @Composable
-    fun SignupScreen(vm: SignupViewmodel) {
-        val context = LocalContext.current
+    fun SignupScreen(viewModel: SignupViewmodel, navController: NavController) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
@@ -116,14 +81,13 @@ class Signup: ComponentActivity() {
                 )
                 Button(
                     onClick = {
-                        vm.onSignup(
+                        viewModel.onSignup(
                             usernameState.value.text,
                             emailState.value.text,
                             passwordState.value.text,
                             )
+                        navController.navigate("login_screen")
 
-                        val intent = Intent(context, HomeActivity::class.java)
-                        context.startActivity(intent)
 
                     },
                     modifier = Modifier.padding(8.dp)
@@ -143,6 +107,6 @@ class Signup: ComponentActivity() {
 
 
     }
-}
+
 
 */

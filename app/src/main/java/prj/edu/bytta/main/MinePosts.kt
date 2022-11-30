@@ -1,11 +1,16 @@
 package prj.edu.bytta.main
 
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.firebase.ui.auth.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -55,7 +61,7 @@ class MinePosts : ComponentActivity() {
                     MinePostsScreen(
                         viewModel = LoginViewModel(
 
-                        )
+                        ), navController = NavController(context = LocalContext.current)
                     )
 
                 }
@@ -66,8 +72,9 @@ class MinePosts : ComponentActivity() {
 
 
     @Composable
-    fun MinePostsScreen(viewModel: LoginViewModel) {
-        val userName = viewModel.userName.value
+    fun MinePostsScreen(navController: NavController,viewModel: LoginViewModel) {
+
+
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value
         val context = LocalContext.current
@@ -84,7 +91,6 @@ class MinePosts : ComponentActivity() {
                 )
                 {
                     ProfileImage(userData?.imageUrl) {
-
                     }
 
                     Text(
@@ -104,6 +110,7 @@ class MinePosts : ComponentActivity() {
                         onClick = {
                             val intent = Intent(context, SettingsActivity::class.java)
                             context.startActivity(intent)
+                            Log.d(ContentValues.TAG, viewModel._userName.value)
 
 
                         }) {
@@ -118,16 +125,21 @@ class MinePosts : ComponentActivity() {
 
                 }
 
+//////////////////////////////// INNE I IF STATEMENT SKAL BRUKERNAVN HENTES
+
                 Column(modifier = Modifier.padding(8.dp)) {
-                    val usernameDisplay =
-                        if (userData?.username == null) "ikke en dritt bro" else "@${userData?.username}"
-                    Text(text = usernameDisplay)
+
+
                 }
+
+////////////////////////////
 
 
                 OutlinedButton(
-                    onClick = {    val intent = Intent(context, EditProfileActivity::class.java)
-                        context.startActivity(intent)},
+                    onClick = {
+                        val intent = Intent(context, EditProfileActivity::class.java)
+                        context.startActivity(intent)
+                    },
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth(),
@@ -143,10 +155,9 @@ class MinePosts : ComponentActivity() {
             }
         }
 
+
     }
 }
-
-
 
 
 @Composable

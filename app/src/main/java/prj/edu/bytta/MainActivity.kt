@@ -31,7 +31,7 @@ class MainActivity: ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Navigation()
-                    ByttaApp()
+
                 }
             }
         }
@@ -40,12 +40,6 @@ class MainActivity: ComponentActivity() {
 }
 
 
-@Composable
-fun ByttaApp() {
-    val vm = SignupViewmodel(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
-
-
-    }
 
 
 
