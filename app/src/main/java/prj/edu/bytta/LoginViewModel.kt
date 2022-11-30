@@ -2,6 +2,7 @@ package prj.edu.bytta
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -17,13 +18,19 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.firestore.model.Document
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
+import java.util.*
 
 class LoginViewModel : ComponentActivity() {
 
     private var db = Firebase.firestore
+    private var storage = Firebase.storage
+
 
     // [START declare_auth]
     private lateinit var auth: FirebaseAuth
@@ -61,6 +68,12 @@ class LoginViewModel : ComponentActivity() {
     init {
         _isLoggedIn.value = getCurrentUser() != null
     }
+
+    // Getters
+    fun getUserName(username: String) {
+        _userName.value = username
+    }
+
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,6 +173,18 @@ class LoginViewModel : ComponentActivity() {
     }
 
     private fun getUserData(uid: String) {
+        inProgress.value = true
+        db.collection(USERS).document(uid).get()
+            .addOnSuccessListener {
+                val user = it.toObject<UserData>()
+                userData.value = user
+                inProgress.value = false
+
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot retrieve user data")
+                inProgress.value = false
+            }
 
     }
 
@@ -185,8 +210,44 @@ class LoginViewModel : ComponentActivity() {
 
 
      fun signOut() {
+
          Firebase.auth.signOut()
     }
+
+    fun updateProfileData(username: String){
+        createOrUpdateProfile(username)
+    }
+
+    private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
+        inProgress.value = true
+
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("images/$uuid")
+        val uploadTask = imageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            val result = it.metadata?.reference?.downloadUrl
+            result?.addOnSuccessListener(onSuccess)
+        }
+            .addOnFailureListener{exc ->
+                handleException(exc)
+                inProgress.value = false
+            }
+    }
+    fun uploadProfileImage(uri: Uri){
+
+        uploadImage(uri){
+            createOrUpdateProfile(imageUrl = it.toString())
+        }
+    }
+
+
+
+
+
+
+
 }
 
 

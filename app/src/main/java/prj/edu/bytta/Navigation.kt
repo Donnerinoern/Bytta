@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,6 +10,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 
+
+
+
+
+
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun Navigation(){
     var navController = rememberNavController()
@@ -35,6 +42,7 @@ fun Navigation(){
             viewModel = LoginViewModel()
         )
         })
+
 
 })
 }
