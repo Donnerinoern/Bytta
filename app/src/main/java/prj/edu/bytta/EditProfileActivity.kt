@@ -1,10 +1,12 @@
 package prj.edu.bytta
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -12,8 +14,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -24,15 +29,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role.Companion.Image
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
+import prj.edu.bytta.innlogging.LoginViewModel
+import prj.edu.bytta.main.CommonDivider
+import prj.edu.bytta.main.CommonImage
+import prj.edu.bytta.main.CommonProgressSpinner
+import prj.edu.bytta.main.MinePosts
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
-class EditProfileActivity : ComponentActivity()  {
+class EditProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -43,8 +58,12 @@ class EditProfileActivity : ComponentActivity()  {
                     horizontalAlignment = Alignment.CenterHorizontally,
 
                     ) {
-                    TopAppbarEditProfile(context = LocalContext.current.applicationContext)
-                    EditProfilePage()
+
+                    ProfileScreen(
+                        viewModel = LoginViewModel(
+
+                        )
+                    )
 
                 }
             }
@@ -52,151 +71,134 @@ class EditProfileActivity : ComponentActivity()  {
     }
 }
 
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppbarEditProfile(context: Context) {
-    val context = LocalContext.current
-    TopAppBar(
+fun ProfileScreen(viewModel: LoginViewModel ) {
+    val isLoading = viewModel.inProgress.value
+    if (isLoading) {
+        CommonProgressSpinner()
+    } else {
+        val userData = viewModel.userData.value
+        var username by rememberSaveable { mutableStateOf(userData?.username ?: "") }
 
-        title = {
+        val context = LocalContext.current
+        ProfileContent(
+            viewModel = LoginViewModel(
 
-            Text(text = "Rediger profil", maxLines = 1,) },
-
-        navigationIcon = {
-            IconButton(onClick = {
-                val intent = Intent(context, ProfileActivity::class.java)
+            ),
+            username = username,
+            onUsernameChange = { username = it },
+            onSave = { viewModel.updateProfile() },
+            onBack = {
+                val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
-            }) {
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "Gå tilbake",
-                )
-            }
-        }
-    )
+            },
+            onLogout = {}
+        )
+
+
+    }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfilePage(context: Context = LocalContext.current.applicationContext) {
+fun ProfileContent(
+    viewModel: LoginViewModel,
+    username: String,
+    onUsernameChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onBack: () -> Unit,
+    onLogout: () -> Unit
 
-    ProfileImage(context = context)
-    // a coroutine scope
-    val scope = rememberCoroutineScope()
-    // we instantiate the saveEmail class
-    val dataStore = StoreUserEmail(context)
+) {
+    val scrollState = rememberScrollState()
+    val imageUrl = viewModel.userData.value?.imageUrl
+    val userName = viewModel.userName.value
 
     Column(
         modifier = Modifier
-            .padding(20.dp)
-            .fillMaxSize(),
-
-        horizontalAlignment = Alignment.CenterHorizontally
-
+            .verticalScroll(scrollState)
+            .padding(8.dp)
     ) {
-        var email by rememberSaveable { mutableStateOf("") }
-/*
-        OutlinedTextField(
-
-            value = email,
-            onValueChange = { email = it
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType
-                = KeyboardType.Email
-            ),
-
-            label = {
-                Text(text = "Brukernavn")
-            }
-        )
-*/
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType
-                = KeyboardType.Email
-            ),
-
-            label = {
-                Text(text = "Email")
-            }
-        )
-/*
-        OutlinedTextField(
-            value = userInputText,
-            onValueChange = {newText ->
-                userInputText = newText
-            },
-            label = {
-                Text(text = "Passord")
-            }
-        )
-*/
-        Button(onClick = {
-            //launch the class in a coroutine scope
-            scope.launch {
-                dataStore.saveEmail(email)
-            }
-        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Lagre endringer")
+            Text(text = "Tilbake", modifier = Modifier.clickable { onBack.invoke() })
+            Text(text = "Lagre", modifier = Modifier.clickable { onSave.invoke() })
         }
 
-        val userEmail = dataStore.getEmail.collectAsState(initial = "")
+        CommonDivider()
 
-        Text(text = userEmail.value!!)
+        ProfileImage(imageUrl = imageUrl, viewModel = LoginViewModel())
 
+        CommonDivider()
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
+            OutlinedTextField(
+                value = userName,
+                label = { Text(text = stringResource(R.string.username)) },
+                onValueChange = { viewModel.setUserName(it) },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(8.dp),
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center
+
+        ) {
+            Text(text = "Logg ut", modifier = Modifier.clickable { onLogout.invoke() })
+        }
     }
 }
 
 
-
 @Composable
-fun ProfileImage(context: Context) {
-    val imageUri = rememberSaveable { mutableStateOf("") }
-    val painter = rememberAsyncImagePainter(
-        if (imageUri.value.isEmpty())
-            R.drawable.ic_user
-        else
-            imageUri.value
-    )
+fun ProfileImage(imageUrl: String?, viewModel: LoginViewModel) {
+
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { imageUri.value = it.toString() }
+        contract = ActivityResultContracts.GetContent(),
+    ){uri: Uri? ->
+
+        uri?.let {  }
     }
 
-    Column (
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Card (
-            shape = CircleShape,
+    Box(modifier = Modifier.height(IntrinsicSize.Min)) {
+        Column(
             modifier = Modifier
                 .padding(8.dp)
-                .size(100.dp)
-                ){
-            Image(painter = painter,
-                  contentDescription = "Profilbilde",
-                  modifier = Modifier
-                      .wrapContentSize()
-                      .clickable { launcher.launch("image/*") },
-                  contentScale = ContentScale.Crop
-
-            )
+                .fillMaxWidth()
+                .clickable { launcher.launch("image/*") },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Card(
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(100.dp)
+            ) {
+                CommonImage(data = imageUrl)
+            }
+            Text(text = "Endre profilbilde")
         }
 
-        Text(text = "Endre profilbilde")
-
+        val isLoading = viewModel.inProgress.value
+        if (isLoading)
+            CommonProgressSpinner()
     }
-
-
-
 }

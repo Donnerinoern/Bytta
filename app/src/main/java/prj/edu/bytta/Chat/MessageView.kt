@@ -10,20 +10,20 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import prj.edu.bytta.Chat.MessageViewModel
 
 @Composable
 fun MessageView(
     messageViewModel: MessageViewModel = viewModel()
 ) {
-    val melding: String by messageViewModel.message.observeAsState(initial = "")
-    val meldinger: List<Map<String, Any>> by messageViewModel.msg.observeAsState(
-        initial = emptyList<Map<String, Any>>().toMutableList()
+    val message: String by messageViewModel.message.observeAsState(initial = "")
+    val messages: List<Map<String, Any>> by messageViewModel.msg.observeAsState(
+        initial = emptyList<Map<String, Any>>().toMutableStateList()
     )
 
     Column(
@@ -34,22 +34,23 @@ fun MessageView(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(weight = 0.85f, fill = true),
+                .weight(weight = 0.75f, fill = true),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
             reverseLayout = true
         ) {
-            items(meldinger) { melding ->
-                val isCurrentuser = melding[MeldingKonstanter.BRUKER] as Boolean
+            items(messages) {
+                message -> val isCurrentuser = message[MeldingKonstanter.BRUKER] as Boolean
 
                 SingleMessage(
-                    message = melding[MeldingKonstanter.MELDINGER].toString(),
+                    message = message[MeldingKonstanter.MELDINGER].toString(),
                     isCurrentUser = isCurrentuser
                 )
             }
-          }
+
+    }
         OutlinedTextField(
-            value = melding ,
+            value = message ,
             onValueChange = { messageViewModel.updateMelding(it) },
             label = {
                 Text("Skriv melding")
@@ -74,9 +75,9 @@ fun MessageView(
                         contentDescription = "Send Knapp"
                     )
                 }
+
             }
-        )
+            )
+
     }
 }
-
-
