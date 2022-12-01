@@ -43,6 +43,7 @@ import prj.edu.bytta.*
 import prj.edu.bytta.R
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.ui.theme.ByttaTheme
+import prj.edu.bytta.NavBar
 
 
 class MinePosts : ComponentActivity() {
@@ -61,7 +62,8 @@ class MinePosts : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MinePostsScreen(
-                        viewModel = LoginViewModel(
+                        viewModel = ByttaViewModel(
+                            auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
 
                         ), navController = NavController(context = LocalContext.current)
                     )
@@ -74,7 +76,7 @@ class MinePosts : ComponentActivity() {
 
 
     @Composable
-    fun MinePostsScreen(navController: NavController, viewModel: LoginViewModel) {
+    fun MinePostsScreen(navController: NavController, viewModel: ByttaViewModel) {
         val userName = viewModel.userName.value
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value
@@ -151,19 +153,13 @@ class MinePosts : ComponentActivity() {
                     Text(text = "Rediger profil")
                 }
 
-                OutlinedButton(
-                    onClick = {  navController.navigate("new_post")  },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(10)
+                CommonDivider()
 
-                ) {
-                    Text(text = "Lag trade")
-                }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = "Trades list")
                 }
+
+                NavBar()
 
             }
         }
@@ -197,7 +193,9 @@ fun ProfileImage(imageUrl: String?, onClick: () -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.ic_add),
                 contentDescription = null,
-                modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary)
+
             )
         }
     }

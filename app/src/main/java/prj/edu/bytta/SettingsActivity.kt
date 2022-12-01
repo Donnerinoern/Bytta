@@ -37,6 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import prj.edu.bytta.innlogging.LoginViewModel
+import prj.edu.bytta.main.CommonDivider
 import prj.edu.bytta.main.MinePosts
 import prj.edu.bytta.ui.theme.ByttaTheme
 
@@ -45,16 +47,22 @@ class SettingsActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            ByttaTheme {
                 // A surface container using the 'background' color from the theme
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
                     horizontalAlignment = Alignment.CenterHorizontally,
-
-                    ) {
+                    
+                    ) 
+                
+                {
                     TopAppbarSettings(context = LocalContext.current.applicationContext)
-                    utseendeSettings(context = LocalContext.current.applicationContext)
+                   // utseendeSettings(context = LocalContext.current.applicationContext)
+                    innStillinger(viewModel = LoginViewModel(), context = LocalContext.current)
                 }
+
             }
         }
     }
@@ -87,6 +95,91 @@ fun TopAppbarSettings(context: Context) {
         }
     )
 }
+
+@Composable
+fun innStillinger(viewModel: LoginViewModel,
+    context: Context
+){
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+
+        Button(onClick = {
+            val i = Intent(ACTION_WIRELESS_SETTINGS)
+            context.startActivity(i)
+        }, modifier = Modifier.width(300.dp)) {
+            Text(text = "Tilkobling og delingsinnstillinger", color = Color.White)
+        }
+    
+        CommonDivider()
+
+        Button(onClick = {
+            val i = Intent(ACTION_WIFI_SETTINGS)
+            context.startActivity(i)
+        }, modifier = Modifier.width(300.dp)) {
+            Text(text = "Nettverks innstillinger", color = Color.White)
+        }
+
+        CommonDivider()
+
+        Button(onClick = {
+            val i = Intent(ACTION_INPUT_METHOD_SETTINGS)
+            context.startActivity(i)
+        }, modifier = Modifier.width(300.dp)) {
+            Text(text = "Inndatametode innstillinger", color = Color.White)
+        }
+
+        CommonDivider()
+
+        Button(onClick = {
+            val i = Intent(ACTION_DISPLAY_SETTINGS)
+            context.startActivity(i)
+        }, modifier = Modifier.width(300.dp)) {
+            Text(text = "Skjerminnstillinger", color = Color.White)
+        }
+
+        CommonDivider()
+
+        Button(onClick = {
+            val i = Intent(ACTION_LOCATION_SOURCE_SETTINGS)
+            context.startActivity(i)
+        }, modifier = Modifier.width(300.dp)) {
+            Text(text = "Lokasjons innstillinger", color = Color.White)
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

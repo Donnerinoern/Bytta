@@ -56,7 +56,7 @@ fun CommonProgressSpinner() {
 // Denne kan bli brukt rundt om i appen
 @Composable
 fun CommonImage(
-    data: String?,
+       data: String?,
     modifier: Modifier = Modifier.wrapContentSize(),
     contentScale: ContentScale = ContentScale.Crop
 ) {
