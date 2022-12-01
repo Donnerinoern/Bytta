@@ -15,6 +15,9 @@ import prj.edu.bytta.innlogging.RegisterScreen
 import prj.edu.bytta.innlogging.TilbakeKnapp
 
 
+
+
+
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
@@ -49,6 +52,7 @@ fun Navigation(){
 
         )
         })
+
 
 })
 }

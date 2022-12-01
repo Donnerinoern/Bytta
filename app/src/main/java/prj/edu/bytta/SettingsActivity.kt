@@ -3,25 +3,15 @@ package prj.edu.bytta
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceCategory
-import android.provider.Settings
 import android.provider.Settings.*
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.Nullable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -37,10 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonDivider
 import prj.edu.bytta.main.MinePosts
 import prj.edu.bytta.ui.theme.ByttaTheme
+
 
 class SettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +50,8 @@ class SettingsActivity : ComponentActivity() {
                     ) 
                 
                 {
-                    TopAppbarSettings(context = LocalContext.current.applicationContext)
-                   // utseendeSettings(context = LocalContext.current.applicationContext)
-                    innStillinger(viewModel = LoginViewModel(), context = LocalContext.current)
+                    TopAppbarSettings()
+                    SettingScreen()
                 }
 
             }
@@ -69,24 +60,34 @@ class SettingsActivity : ComponentActivity() {
 }
 
 
+@Composable
+fun SettingScreen(){
+
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 24.dp)
+            .fillMaxSize()
+    ) {
+
+        innStillinger( context = LocalContext.current)
+    }
+
+}
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppbarSettings(context: Context) {
+fun TopAppbarSettings() {
     val context = LocalContext.current
     TopAppBar(
-
-
-
         title = {
             Text(text = "Innstillinger", maxLines = 1,) },
-
-
         navigationIcon = {
             IconButton(onClick = {
                 val intent = Intent(context, MinePosts::class.java)
-                context.startActivity(intent)            }) {
+                context.startActivity(intent) }) {
                 androidx.compose.material3.Icon(
                     Icons.Filled.ArrowBack,
                     contentDescription = "Gå tilbake",
@@ -97,7 +98,7 @@ fun TopAppbarSettings(context: Context) {
 }
 
 @Composable
-fun innStillinger(viewModel: LoginViewModel,
+fun innStillinger(
     context: Context
 ){
 
@@ -154,213 +155,6 @@ fun innStillinger(viewModel: LoginViewModel,
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@Composable
-fun utseendeSettings(context: Context) {
-    val mCheckedState = remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(16.dp, 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-
-
-
-    ) {
-
-
-        Text(
-            text = "Utseende",
-            maxLines = 1,
-            textAlign = TextAlign.Center,
-
-        )
-/*
-        Icon(
-            painter = painterResource(id = R.drawable.ic_baseline_dark_mode_24), contentDescription = null)
-
-
-*/
-
-
-    }
-
-    Divider(modifier = Modifier
-        .height(10.dp)
-        .background(MaterialTheme.colorScheme.secondary)
-
-        )
-
-
-
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(16.dp, 0.dp),
-
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(text = "Nattmodus")
-
-            Switch(checked = mCheckedState.value, onCheckedChange = { mCheckedState.value = it })
-
-
-        }
-
-    Column(modifier = Modifier
-        .fillMaxWidth()
-
-
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(16.dp, 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-
-
-        ) {
-
-
-            Text(
-                text = "Varslinger",
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-
-                )
-
-
-        }
-        Divider(
-            modifier = Modifier
-                .height(10.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(16.dp, 0.dp),
-
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(text = "Meldinger")
-
-            Icon(
-                modifier = Modifier
-                    .size(50.dp)
-                    .weight(weight = 1f, fill = false),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Høyre pil",
-
-                )
-
-
-
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(16.dp, 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-
-
-        ) {
-
-
-            Text(
-                text = "Konto",
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-
-                )
-
-
-        }
-        Divider(
-            modifier = Modifier
-                .height(10.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(16.dp, 0.dp),
-
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(text = "Endre passord")
-
-            Icon(
-                modifier = Modifier
-                    .size(50.dp)
-                    .weight(weight = 1f, fill = false),
-                imageVector = Icons.Filled.KeyboardArrowRight,
-                contentDescription = "Høyre pil",
-
-                )
-
-
-
-        }
-
-
-
-
-
-
-
-    }
-
-}
-    
     
 
     

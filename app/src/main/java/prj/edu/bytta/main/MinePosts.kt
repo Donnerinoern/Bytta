@@ -65,7 +65,7 @@ class MinePosts : ComponentActivity() {
                         viewModel = ByttaViewModel(
                             auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
 
-                        ), navController = NavController(context = LocalContext.current)
+                        )
                     )
 
                 }
@@ -76,7 +76,7 @@ class MinePosts : ComponentActivity() {
 
 
     @Composable
-    fun MinePostsScreen(navController: NavController, viewModel: ByttaViewModel) {
+    fun MinePostsScreen( viewModel: ByttaViewModel) {
         val userName = viewModel.userName.value
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value

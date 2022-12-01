@@ -167,6 +167,7 @@ fun ProfileContent(
     }
 }
 
+// Kode som viser redigering av profilbilde
 
 @Composable
 fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {

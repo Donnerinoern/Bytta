@@ -88,7 +88,7 @@ class ByttaViewModel @Inject constructor(
         val uid = auth.currentUser?.uid
         val userData = UserData(
             imageUrl = imageUrl ?: userData.value?.imageUrl
-
+// Kode som kommuniserer med data klassen UserData, og bidrar til å oppdatere profilbilde
         )
 
         uid?.let { uid ->
@@ -143,8 +143,9 @@ class ByttaViewModel @Inject constructor(
         val storageRef = storage.reference
         val uuid = UUID.randomUUID()
         val imageRef = storageRef.child("images/$uuid")
-        val uploadTask = imageRef.putFile(uri)
 
+        // Laster opp bildefil til firebase storage
+        val uploadTask = imageRef.putFile(uri)
         uploadTask
             .addOnSuccessListener {
                 val result = it.metadata?.reference?.downloadUrl
