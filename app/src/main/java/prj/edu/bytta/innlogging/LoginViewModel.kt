@@ -1,6 +1,7 @@
 package prj.edu.bytta.innlogging
 
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -113,12 +114,13 @@ class LoginViewModel : ComponentActivity() {
 
     //Autorisering i Firebase holder kun email og passord.
     // Denne funksjonen gir en bruker et brukernavn evt bilde
-    private fun updateProfile() {
+    private fun updateProfile(imageUrl: String? = null) {
 
       val user = Firebase.auth.currentUser
 
       val profileUpdates = userProfileChangeRequest {
           displayName = userName.value
+          photoUri = Uri.parse(imageUrl)
       }
       user!!.updateProfile(profileUpdates)
           .addOnCompleteListener { task ->

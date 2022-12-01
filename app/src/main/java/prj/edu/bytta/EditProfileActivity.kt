@@ -21,6 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.innlogging.LoginViewModel
@@ -37,9 +42,10 @@ class EditProfileActivity : ComponentActivity() {
         setContent {
             ByttaTheme {
                 // A surface container using the 'background' color from the theme
-                Column(
+                Surface(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                   // horizontalAlignment = Alignment.CenterHorizontally,
+                    color = MaterialTheme.colorScheme.background
 
                     ) {
 
@@ -47,7 +53,11 @@ class EditProfileActivity : ComponentActivity() {
                         viewModel = LoginViewModel(),
                             vieWmodel = ProfileViewmodel()
 
+                        viewModel = ByttaViewModel(
+                        auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
                         )
+                    )
+
                 }
             }
         }
@@ -65,6 +75,8 @@ fun ProfileScreen(
         CommonProgressSpinner()
     } else {
 
+        val userData = viewModel.userData.value
+
         val context = LocalContext.current
         ProfileContent(
             viewModel = LoginViewModel(),
@@ -76,6 +88,8 @@ fun ProfileScreen(
             },
             onLogout = {}
         )
+
+
     }
 }
 
@@ -113,7 +127,7 @@ fun ProfileContent(
 
         CommonDivider()
 
-        ProfileImage(imageUrl = imageUrl, viewModel = LoginViewModel())
+        ProfileImage(imageUrl = imageUrl, viewModel = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage))
 
         CommonDivider()
 
@@ -151,15 +165,16 @@ fun ProfileContent(
     }
 }
 
+// Kode som viser redigering av profilbilde
 
 @Composable
-fun ProfileImage(imageUrl: String?, viewModel: LoginViewModel) {
+fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ){uri: Uri? ->
 
-        uri?.let {  }
+        uri?.let { viewModel.uploadProfileImage(uri) }
     }
 
     Box(modifier = Modifier.height(IntrinsicSize.Min)) {

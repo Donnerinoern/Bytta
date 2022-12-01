@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.innlogging.LoginViewModel
 
 class HomeActivity: ComponentActivity() {
@@ -37,7 +38,8 @@ class HomeActivity: ComponentActivity() {
                 Content(
                     ByttaViewModel(
                         Firebase.auth,
-                        FirebaseFirestore.getInstance()),
+                        FirebaseFirestore.getInstance(),
+                        Firebase.storage),
                     viewModel = LoginViewModel(),
                     navController = NavController(context = LocalContext.current))
             }

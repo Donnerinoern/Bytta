@@ -42,6 +42,7 @@ import prj.edu.bytta.*
 import prj.edu.bytta.R
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.ui.theme.ByttaTheme
+import prj.edu.bytta.NavBar
 
 
 class MinePosts : ComponentActivity() {
@@ -62,6 +63,10 @@ class MinePosts : ComponentActivity() {
                     MinePostsScreen(
                         viewModel = LoginViewModel(),
                         navController = NavController(context = LocalContext.current)
+                        viewModel = ByttaViewModel(
+                            auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
+
+                        )
                     )
                 }
             }
@@ -70,9 +75,8 @@ class MinePosts : ComponentActivity() {
     }
 
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun MinePostsScreen(navController: NavController, viewModel: LoginViewModel) {
+    fun MinePostsScreen( vm: ByttaViewModel, viewModel: LoginViewModel) {
         val userName = viewModel.userName.value
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value
@@ -157,13 +161,13 @@ class MinePosts : ComponentActivity() {
                         .padding(8.dp)
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10)
+                CommonDivider()
 
-                ) {
-                    Text(text = "Lag trade")
-                }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = "Trades list")
                 }
+
+                NavBar()
 
             }
         }
@@ -197,13 +201,13 @@ fun ProfileImage(imageUrl: String?, onClick: () -> Unit) {
             Image(
                 painter = painterResource(id = R.drawable.ic_add),
                 contentDescription = null,
-                modifier = Modifier.background(MaterialTheme.colorScheme.primary)
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primary)
+
             )
         }
     }
 }
-
-
 
 
 
