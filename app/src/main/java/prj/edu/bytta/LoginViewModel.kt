@@ -172,7 +172,6 @@ class LoginViewModel : ComponentActivity() {
   fun updateProfile() {
 
       val user = Firebase.auth.currentUser
-
       val profileUpdates = userProfileChangeRequest {
           displayName = userName.value
           photoUri = Uri.parse("")
@@ -181,7 +180,7 @@ class LoginViewModel : ComponentActivity() {
       user!!.updateProfile(profileUpdates)
           .addOnCompleteListener { task ->
               if (task.isSuccessful) {
-                  Log.d(TAG, "User profile updated.")
+                  Log.d(TAG, "username: ${user?.displayName} User profile updated."  )
               }
           }
   }

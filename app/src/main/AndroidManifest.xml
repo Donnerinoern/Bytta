@@ -98,20 +98,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:windowSoftInputMode="adjustResize"
-            android:name=".Signup"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/ByttaTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
         <activity
             android:windowSoftInputMode="adjustResize"
             android:name=".main.MinePosts"
@@ -127,6 +114,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+
     </application>
 
 </manifest>
