@@ -24,8 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.size.Size
-import prj.edu.bytta.Chat.Brukern
-import prj.edu.bytta.Chat.MessageActivity
+import prj.edu.bytta.chat.Brukern
+import prj.edu.bytta.chat.MessageActivity
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*

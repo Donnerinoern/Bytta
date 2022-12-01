@@ -1,4 +1,4 @@
-package prj.edu.bytta.Chat
+package prj.edu.bytta.chat
 
 
 import android.content.Intent
@@ -24,6 +24,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import prj.edu.bytta.*
 import prj.edu.bytta.R
+import prj.edu.bytta.innlogging.Login
+import prj.edu.bytta.innlogging.LoginViewModel
+import prj.edu.bytta.main.MinePosts
 
 class ChatroomActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,7 +113,7 @@ fun ChatPage(viewModel: LoginViewModel) {
     )
     val intents = listOf(
         HomeActivity::class.java,
-        ProfileActivity::class.java,
+        MinePosts::class.java,
         ChatroomActivity::class.java
     )
     Scaffold(

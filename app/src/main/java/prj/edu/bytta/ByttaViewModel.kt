@@ -9,6 +9,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.text.Typography.dagger
 
 //const val USERS = "users"
 const val TRADES = "trades"

@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import prj.edu.bytta.chat.ChatroomActivity
 import prj.edu.bytta.main.MinePosts
 
 @Composable
@@ -25,7 +26,7 @@ fun NavBar() {
     val intents = listOf(
         MinePosts::class.java,
         HomeActivity::class.java,
-        MessageActivity::class.java
+        ChatroomActivity::class.java
     )
     BottomAppBar {
         NavigationBar() {
