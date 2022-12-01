@@ -29,7 +29,6 @@ import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import java.util.*
 
-const val USERS = "users"
 
 class LoginViewModel : ComponentActivity() {
 

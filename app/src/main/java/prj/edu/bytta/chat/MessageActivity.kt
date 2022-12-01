@@ -1,4 +1,4 @@
-package prj.edu.bytta.Chat
+package prj.edu.bytta.chat
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

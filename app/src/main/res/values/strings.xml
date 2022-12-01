@@ -19,8 +19,9 @@
     <string name="logingoogle">Logg Inn Med Google</string>
     <string name="you">You:</string>
     <string name="recents">Recents</string>
-    <string name="search_contacts">Recents</string>
+    <string name="chat_faila_med_å_loade">Recents</string>
     <string name="contacts_name">Recents</string>
-    <string name="bruker_online">Recents</string>
+    <string name="chat_melding_ble_aldri_sendt">Recents</string>
     <string name="bruker_sist_på">Recents</string>
+    <string name="bruker_online">bruker</string>
 </resources>

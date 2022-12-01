@@ -1,7 +1,5 @@
 package prj.edu.bytta
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,7 +20,6 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import prj.edu.bytta.Chat.ChatroomActivity
 import prj.edu.bytta.innlogging.LoginViewModel
 
 class HomeActivity: ComponentActivity() {

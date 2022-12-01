@@ -10,7 +10,7 @@ import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-//const val USERS = "users"
+const val USERS = "users"
 const val TRADES = "trades"
 
 @HiltViewModel
