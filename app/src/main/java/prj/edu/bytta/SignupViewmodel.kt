@@ -17,6 +17,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import prj.edu.bytta.MeldingKonstanter.TAG
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import java.util.UUID
@@ -144,7 +145,7 @@ class SignupViewmodel(
         createOrUpdateProfile(username)
     }
 
-    private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
+    fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
         inProgress.value = true
 
         val storageRef = storage.reference
@@ -167,4 +168,31 @@ class SignupViewmodel(
         }
     }
 
+    fun uploadTrade(uri: Uri, body: String, item: String) {
+        inProgress.value = true
+
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("images/$uuid")
+        val uploadTask = imageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            val result = it.metadata?.reference?.downloadUrl
+            result?.addOnSuccessListener(){}
+        }
+            .addOnFailureListener{exc ->
+                handleException(exc)
+                inProgress.value = false
+            }
+        val tradeData = TradeData(body, item, getCurrentUser()?.displayName, "gs://byttamob.appspot.com/images/$uuid")
+        db.collection("trades")
+            .add(tradeData)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
+    }
 }

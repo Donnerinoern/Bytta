@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.main.CommonProgressSpinner
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,20 +49,34 @@ fun Content(vm: ByttaViewModel, loginViewModel: LoginViewModel) {
     val context = LocalContext.current
     Scaffold(
         topBar = {
-            Button (
-                content = { Text(text = stringResource(R.string.loggut))},
-                onClick = { loginViewModel.signOut()
-                    val intent = Intent(context, Login::class.java)
-                    context.startActivity(intent)
-                }
-            )
+
         },
         bottomBar = {
             NavBar()
         }
     ) {
         paddingValues ->
-        TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
+        Column() {
+            Row() {
+                Button (
+                    content = { Text(text = "New trade")},
+                    onClick = {
+                        /*loginViewModel.signOut()*/
+                        val intent = Intent(context, NewTrade::class.java)
+                        context.startActivity(intent)
+                    }
+                )
+                Button (
+                    content = { Text(text = "Log out")},
+                    onClick = {
+                        loginViewModel.signOut()
+                        val intent = Intent(context, Login::class.java)
+                        context.startActivity(intent)
+                    }
+                )
+            }
+            TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
+        }
     }
 }
 
@@ -74,7 +89,7 @@ fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel,
         }
     }
     if (loading) {
-        Text(text = "Loading...")
+        CommonProgressSpinner()
     }
 }
 
@@ -88,7 +103,7 @@ fun TradeCard(trade: TradeData) {
     ) {
         Row(modifier = Modifier.padding(all = 8.dp)) {
             Image(
-                painter = painterResource(R.drawable.petter_northug_2018_scanpix),
+                painter = painterResource(R.drawable.ic_user),
                 contentDescription = "Contact profile picture",
                 modifier = Modifier
                     // Set image size to 40 dp
@@ -101,7 +116,7 @@ fun TradeCard(trade: TradeData) {
             Spacer(modifier = Modifier.width(8.dp))
 
             Column {
-                Text(text = trade.user!!)
+                //Text(text = trade.user!!)
                 // Add a vertical space between the author and message texts
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = trade.item!!)
