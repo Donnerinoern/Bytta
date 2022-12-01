@@ -1,3 +1,4 @@
+/*
 package prj.edu.bytta.Chat
 
 import android.annotation.SuppressLint
@@ -18,7 +19,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -185,3 +185,4 @@ class KontakterView {
         }
     }
 }
+*/

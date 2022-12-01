@@ -27,7 +27,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".Chat.ChatroomActivity"
+            android:name=".chat.ChatroomActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -59,7 +59,7 @@
         </activity>
 
         <activity
-            android:name=".Chat.MessageActivity"
+            android:name=".chat.MessageActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
