@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.Chat
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,12 +7,16 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.MeldingKonstanter
+import prj.edu.bytta.MeldingKonstanter.TAG
 import java.lang.IllegalArgumentException
+
 
 
 class MessageViewModel : ViewModel() {
     init {
         mottaMelding()
+        //runAll()
     }
 
     private val melding = MutableLiveData("")
@@ -60,21 +64,19 @@ class MessageViewModel : ViewModel() {
                         val data = doc.data
                         data[MeldingKonstanter.BRUKER] =
                             Firebase.auth.currentUser?.uid.toString() == data[MeldingKonstanter.SENDT_AV].toString()
+
                         list.add(data)
                     }
-                    updateMeldinger(list)
                 }
 
+                updateMeldinger(list)
+                //Log.d(TAG, "Melding Skrevet: $list")
             }
     }
 
-
-    // Oppdaterer listren med detaljer fra firestore
+    // Oppdaterer listen med detaljer fra firestore
     private fun updateMeldinger(list: MutableList<Map<String, Any>>) {
         meldinger.value = list.asReversed()
+        Log.d(TAG, "Melding: ${meldinger.value}")
     }
-
-
-
-
 }

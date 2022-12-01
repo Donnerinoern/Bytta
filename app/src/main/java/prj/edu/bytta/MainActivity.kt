@@ -39,14 +39,3 @@ class MainActivity: ComponentActivity() {
 
     }
 }
-
-
-
-
-
-
-
-
-
-
-
