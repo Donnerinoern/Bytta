@@ -1,6 +1,6 @@
-package prj.edu.bytta
+package prj.edu.bytta.innlogging
 
-import android.annotation.SuppressLint
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -12,13 +12,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,20 +22,45 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.navArgument
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import okhttp3.Response
+import prj.edu.bytta.R
 import prj.edu.bytta.data.UserData
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
 
+class Login: ComponentActivity() {
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+
+            ByttaTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    LoginScreen(
+                        viewModel = LoginViewModel(),
+                        navController = NavController(context = LocalContext.current))
+                }
+            }
+        }
+
+    }
+
+}
+
 @Composable
-fun RegisterScreen(viewModel: LoginViewModel, navController: NavController) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    navController: NavController) {
 
     Column(
         modifier = Modifier
@@ -53,18 +73,18 @@ fun RegisterScreen(viewModel: LoginViewModel, navController: NavController) {
         if (viewModel.error.value.isNotBlank()) {
             viewModel.ErrorField()
         }
-        IconReg()
-        UserName(viewModel)
-        EmailRegister(viewModel)
-        PasswordRegister(viewModel)
-        ButtonEmailPasswordRegister(viewModel, navController)
-        TilbakeKnapp(navController)
+        Icon()
+        EmailField(viewModel)
+        PasswordField(viewModel)
+        ButtonEmailPasswordLogin(viewModel, navController)
+        ButtonEmailPasswordCreate(navController)
+        LogInWithGoogle()
+        LoggUtKnapp(viewModel, navController)
+
     }
 }
-
-
 @Composable
-fun IconReg() {
+fun Icon() {
     Image(
         painter = painterResource(R.drawable.ic_banner_foreground2),
         contentDescription = "Logo",
@@ -74,24 +94,9 @@ fun IconReg() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserName(viewModel: LoginViewModel) {
-    val userName = viewModel.userName.value
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
-        value = userName,
-        label = { Text(text = stringResource(R.string.username)) },
-        onValueChange = { viewModel.setUserName(it) },
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
-        shape = RoundedCornerShape(8.dp),
-    )
-}
+fun EmailField(
+    viewModel: LoginViewModel) {
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EmailRegister(viewModel: LoginViewModel) {
     val userEmail = viewModel.userEmail.value
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -109,7 +114,9 @@ fun EmailRegister(viewModel: LoginViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordRegister(viewModel: LoginViewModel) {
+fun PasswordField(
+    viewModel: LoginViewModel) {
+
     val password = viewModel.password.value
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -120,63 +127,85 @@ fun PasswordRegister(viewModel: LoginViewModel) {
         colors = TextFieldDefaults.textFieldColors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
-        ),
+    ),
         shape = RoundedCornerShape(8.dp),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
     )
 }
 
-
-
-@SuppressLint("SuspiciousIndentation")
 @Composable
-fun ButtonEmailPasswordRegister(viewModel: LoginViewModel, navController: NavController) {
-    val context = LocalContext.current
+fun ButtonEmailPasswordLogin(
+    viewModel: LoginViewModel,
+    navController: NavController) {
     val user = Firebase.auth.currentUser
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
         enabled = viewModel.isValidEmailAndPassword(),
-        content = { Text(text = stringResource(R.string.create)) },
-        onClick = { viewModel.createUserWithEmailAndPassword()
+        content = { Text(text = stringResource(R.string.login)) },
+        onClick = {
+            viewModel.signInWithEmailAndPassword()
             if (user != null) {
-                navController.navigate("login_screen") {
-                    Toast.makeText(
-                        context,
-                        "Bruker Opprettet" ,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    viewModel.getCurrentUser()
-                }
-            } else
-                viewModel._error.value = "Email allerede i bruk"
-            }
+                navController.navigate("home_screen")
+                viewModel.getCurrentUser()
 
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TilbakeKnapp(navController: NavController) {
-    TopAppBar(
-
-        title = {
-
-            Text(text = "Tilbake", maxLines = 1,) },
-
-        navigationIcon = {
-            IconButton(onClick = {
-                navController.navigate("login_screen")
-            }) {
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "Gå tilbake",
-                )
+            } else {
+                viewModel._error.value = "Kunne ikke logge inn"
             }
         }
     )
 }
+
+@Composable
+fun ButtonEmailPasswordCreate(navController: NavController) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            content = { Text(text = stringResource(R.string.create)) },
+            onClick = { navController.navigate("register_screen") }
+
+        )
+
+}
+
+@Composable
+fun LogInWithGoogle() {
+    val context = LocalContext.current
+    Button (
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        content = { Text(text = stringResource(R.string.logingoogle))},
+        onClick = { val intent = Intent(context, SignIn::class.java)
+            context.startActivity(intent)
+
+        }
+            )
+}
+@Composable
+fun LoggUtKnapp(
+    viewModel: LoginViewModel,
+    navController: NavController
+) {
+    Button (
+        content = { Text(text = stringResource(R.string.loggut))},
+        onClick = { viewModel.signOut()
+                    viewModel.getCurrentUser()
+        }
+
+    )
+}
+
+
+private fun reload() {
+
+}
+
+
+
+
 
 
 

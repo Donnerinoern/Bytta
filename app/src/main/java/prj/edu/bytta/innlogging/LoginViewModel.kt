@@ -1,7 +1,7 @@
-package prj.edu.bytta
+package prj.edu.bytta.innlogging
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,14 +13,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import prj.edu.bytta.HomeActivity
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import java.util.*
@@ -33,9 +37,6 @@ class LoginViewModel : ComponentActivity() {
     private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
 
-
-    private val _isLoggedIn = mutableStateOf(false)
-    val isLoggedIn: State<Boolean> = _isLoggedIn
     val _error = mutableStateOf("")
     val error: State<String> = _error
     val _userName = mutableStateOf("")
@@ -59,22 +60,12 @@ class LoginViewModel : ComponentActivity() {
         _password.value = password
     }
 
-    fun setError(error: String.Companion) {
-        _error.value = error.toString()
-    }
-
-    init {
-        _isLoggedIn.value = getCurrentUser() != null
-    }
-
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // [START initialize_auth]
-        // Initialize Firebase Auth
         auth = Firebase.auth
-        // [END initialize_auth]
+
     }
 
     val inProgress = mutableStateOf(false)
@@ -87,16 +78,15 @@ class LoginViewModel : ComponentActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     updateProfile()
-                   // createOrUpdateProfile(username = userName.value)
                 } else {
-                // email already in use
+                    // email already in use
                     Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
                     _error.value = "Email er allerede i bruk"
 
-            }
-
                 }
+
             }
+    }
 
     fun signInWithEmailAndPassword() {
         Firebase.auth.signInWithEmailAndPassword(userEmail.value, password.value)
@@ -114,7 +104,7 @@ class LoginViewModel : ComponentActivity() {
             }
     }
 
-        fun getCurrentUser(): FirebaseUser? {
+    fun getCurrentUser(): FirebaseUser? {
         val user = Firebase.auth.currentUser
         Log.d(TAG, "username: ${user?.displayName}, email: ${user?.email}")
         return user
@@ -129,90 +119,21 @@ class LoginViewModel : ComponentActivity() {
     }
 
 
-  /*  fun createOrUpdateProfile(
-        username: String? = null,
-        imageUrl: String? = null
-    ){
-        val uid = Firebase.auth.currentUser?.uid
-        val userData = UserData(
-            userID = uid,
-            username = username ?: userName.value,
-            imageUrl = imageUrl ?: userData.value?.imageUrl
-        )
-        uid?.let { uid ->
-            inProgress.value = true
-            db.collection(USERS).document(uid).get().addOnSuccessListener {
-                if (it.exists()) {
-                    it.reference.update(userData.toMap())
-                        .addOnSuccessListener {
-                            this.userData.value = userData
-                            inProgress.value = false
-                        }
-                        .addOnFailureListener{
-                            handleException(it, "Cannot update user")
-                            Log.d(ContentValues.TAG, "Bruker eksisterer, kan ikke oppdatere")
-                            inProgress.value = false
-                        }
-                } else {
-                    db.collection(USERS).document(uid).set(userData)
-                    getUserData(uid)
-                    inProgress.value = false
-                }
-            }
-                .addOnFailureListener { exc ->
-                    handleException(exc, "Kan ikke lage bruker")
-                    Log.d(ContentValues.TAG, "Kan ikke lage bruker!")
-                    inProgress.value = false
-                }
-        }
-
-    }
-
-*/
   fun updateProfile() {
 
       val user = Firebase.auth.currentUser
+
       val profileUpdates = userProfileChangeRequest {
           displayName = userName.value
           photoUri = Uri.parse("")
       }
-
       user!!.updateProfile(profileUpdates)
           .addOnCompleteListener { task ->
               if (task.isSuccessful) {
-                  Log.d(TAG, "username: ${user?.displayName} User profile updated."  )
+                  Log.d(TAG, "Oppdatert profil")
               }
           }
   }
-
-    private fun getUserData(uid: String) {
-
-    }
-
-    private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit){
-        inProgress.value = true
-
-        val storageRef = storage.reference
-        val uuid = UUID.randomUUID()
-        val imageRef = storageRef.child("images/$uuid")
-        val uploadTask = imageRef.putFile(uri)
-
-        uploadTask.addOnSuccessListener {
-            val result = it.metadata?.reference?.downloadUrl
-            result?.addOnSuccessListener(onSuccess)
-        }
-            .addOnFailureListener{exc ->
-                handleException(exc)
-                inProgress.value = false
-            }
-    }
-   /* fun uploadProfileImage(uri: Uri){
-        uploadImage(uri){
-            createOrUpdateProfile(imageUrl = it.toString())
-        }
-    }
-
-*/
 
     private fun handleException(exception: Exception? = null, customMessage: String = ""){
                     exception?.printStackTrace()
@@ -231,7 +152,6 @@ class LoginViewModel : ComponentActivity() {
             fontWeight = FontWeight.Bold
         )
     }
-
 
 
     fun reload() {
