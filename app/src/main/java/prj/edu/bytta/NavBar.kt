@@ -11,6 +11,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import prj.edu.bytta.Chat.ChatroomActivity
+import prj.edu.bytta.Chat.MessageActivity
 import prj.edu.bytta.main.MinePosts
 
 @Composable

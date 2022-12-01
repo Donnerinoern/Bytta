@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import coil.annotation.ExperimentalCoilApi
+import prj.edu.bytta.MessageView
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 class MessageActivity : ComponentActivity() {
@@ -24,7 +25,7 @@ class MessageActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-
+                    MessageView()
                     //Conversation(SampleData.conversationSample)
                     //ChatView(userMessage = String.Companion)
                     /*{

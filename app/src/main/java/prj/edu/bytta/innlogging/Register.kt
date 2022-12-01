@@ -128,6 +128,10 @@ fun ButtonEmailPasswordRegister(viewModel: LoginViewModel, navController: NavCon
         enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.create)) },
         onClick = {
+            // Henter lag bruker funksjonen fra LoginViewModel
+            // Siden Firebase holder på brukeren etter oppretting
+            // er if/else setningen aktuell for å bli sendt tilbake til
+            // loginscreen
             viewModel.createUserWithEmailAndPassword()
             if (user != null) {
                 navController.navigate("login_screen") {

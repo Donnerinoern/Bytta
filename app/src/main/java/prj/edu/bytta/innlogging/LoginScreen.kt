@@ -41,7 +41,6 @@ class Login: ComponentActivity() {
         setContent {
 
             ByttaTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -79,7 +78,7 @@ fun LoginScreen(
         ButtonEmailPasswordLogin(viewModel, navController)
         ButtonEmailPasswordCreate(navController)
         LogInWithGoogle()
-        LoggUtKnapp(viewModel, navController)
+        LoggUtKnapp(viewModel)
 
     }
 }
@@ -145,6 +144,10 @@ fun ButtonEmailPasswordLogin(
         enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.login)) },
         onClick = {
+            // Henter logg inn med bruker funksjonen fra LoginViewModel
+            // Dersom det er en match med uid og brukeren som
+            // eksisterer i Firebase vil man bli sendt
+            // til homescreen (HomeActivity)
             viewModel.signInWithEmailAndPassword()
             if (user != null) {
                 navController.navigate("home_screen")
@@ -186,8 +189,7 @@ fun LogInWithGoogle() {
 }
 @Composable
 fun LoggUtKnapp(
-    viewModel: LoginViewModel,
-    navController: NavController
+    viewModel: LoginViewModel
 ) {
     Button (
         content = { Text(text = stringResource(R.string.loggut))},
@@ -199,9 +201,6 @@ fun LoggUtKnapp(
 }
 
 
-private fun reload() {
-
-}
 
 
 

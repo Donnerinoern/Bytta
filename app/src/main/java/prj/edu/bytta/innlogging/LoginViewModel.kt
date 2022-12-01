@@ -72,14 +72,15 @@ class LoginViewModel : ComponentActivity() {
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf<Event<String>?>(null)
 
-
+    // Funksjon fra Firebase API som lager en bruker med email og passord
     fun createUserWithEmailAndPassword() {
         Firebase.auth.createUserWithEmailAndPassword(userEmail.value, password.value)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    // Oppdaterer bruker med et navn evt bilde.
                     updateProfile()
                 } else {
-                    // email already in use
+                    // email allerede i bruk
                     Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
                     _error.value = "Email er allerede i bruk"
 
@@ -87,7 +88,7 @@ class LoginViewModel : ComponentActivity() {
 
             }
     }
-
+    // Funksjon fra Firebase API som logger inn en bruker med email og passord
     fun signInWithEmailAndPassword() {
         Firebase.auth.signInWithEmailAndPassword(userEmail.value, password.value)
             .addOnCompleteListener(this) { task ->
@@ -104,13 +105,15 @@ class LoginViewModel : ComponentActivity() {
             }
     }
 
+    // Melding i konsollvinduet om bruker er innlogget med brukernavn og email
     fun getCurrentUser(): FirebaseUser? {
         val user = Firebase.auth.currentUser
         Log.d(TAG, "username: ${user?.displayName}, email: ${user?.email}")
         return user
     }
 
-
+    // Brukes i LoginScreen og Register for å holde Logg Inn og Lag Bruker
+    // knappene visket ut frem til det er tekst i inputboksen
     fun isValidEmailAndPassword(): Boolean {
         if (userEmail.value.isBlank() || password.value.isBlank()) {
             return false
@@ -118,7 +121,8 @@ class LoginViewModel : ComponentActivity() {
         return true
     }
 
-
+    //Autorisering i Firebase holder kun email og passord.
+    // Denne funksjonen gir en bruker et brukernavn evt bilde
   fun updateProfile() {
 
       val user = Firebase.auth.currentUser
@@ -158,7 +162,7 @@ class LoginViewModel : ComponentActivity() {
 
     }
 
-
+    // Logger brukeren ut
      fun signOut() {
          Firebase.auth.signOut()
     }

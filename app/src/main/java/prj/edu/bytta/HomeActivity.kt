@@ -1,5 +1,6 @@
 package prj.edu.bytta
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -61,58 +62,15 @@ fun Content(
     val tradeFeedLoading = vm.tradesFeedProgress
     val user = Firebase.auth.currentUser
     Scaffold(
-        topBar = {
-            Button (
-                content = { Text(text = stringResource(R.string.loggut))},
-                onClick = { loginViewModel.signOut()
-                    viewModel.signOut()
-                    navController.navigate("login_screen") }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
-    val context = LocalContext.current
-    var selectedItem by remember { mutableStateOf(0) }
-    val items = listOf("Home", "Profile", "Messages")
-    val icons = listOf(
-        Icons.Default.Home,
-        Icons.Default.Person,
-        Icons.Default.Email
-        )
-    val intents = listOf(
-        HomeActivity::class.java,
-        ProfileActivity::class.java,
-        MessageActivity::class.java
-    )
-    db.collection("trades")
-        .get()
-    Scaffold(
-    topBar = {
-
-             Button (
-                 content = { Text(text = stringResource(R.string.loggut))},
-                 onClick = { viewModel.signOut()
-                     val intent = Intent(context, Login::class.java)
-                     context.startActivity(intent)}
-                     )
-    },
-        bottomBar = {
-            BottomAppBar {
-                NavigationBar() {
-
-                    items.forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            icon = {Icon(imageVector = icons[index], contentDescription = items[index])},
-                            label = {Text(item)},
-                            selected = selectedItem == index,
-                            onClick = { selectedItem = index
-                                val intent = Intent(context, intents[index])
-                                context.startActivity(intent)}
-                        )
+            topBar = {
+                Button (
+                    content = { Text(text = stringResource(R.string.loggut))},
+                    onClick = {
+                        navController.navigate("login_screen")
+                        viewModel.signOut()
                     }
-                }
-            )
-        },
+                )
+            },
         bottomBar = {
             NavBar()
         }
@@ -125,8 +83,8 @@ fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
 @Composable
 fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel, modifier: Modifier) {
     LazyColumn {
-        items(items = tradeList) {  
-            item -> 
+        items(items = tradeList) {
+            item ->
             TradeCard(trade = item)
         }
     }

@@ -13,11 +13,16 @@ import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.innlogging.RegisterScreen
 import prj.edu.bytta.innlogging.TilbakeKnapp
 
-
+// NavController for navigering i appen
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
 
+// Navhost skal egentlig ikke være loginscreen, men homescreen.
+// Men det ble problematisk med en funksjon som sender en bruker
+// til homescreen hvis de er innlogget, og til loginscreen når
+// de ikke er innlogget siden android/firebase lagrer brukeren
+// og alltid holder de innlogget.
     NavHost(
         navController = navController,
         startDestination = "login_screen",
