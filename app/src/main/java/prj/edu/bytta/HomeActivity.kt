@@ -1,5 +1,7 @@
 package prj.edu.bytta
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,9 +22,10 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.Chat.ChatroomActivity
 import prj.edu.bytta.innlogging.LoginViewModel
 
-class HomeActivity : ComponentActivity() {
+class HomeActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,6 +47,8 @@ class HomeActivity : ComponentActivity() {
         }
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,8 +85,8 @@ fun Content(
 @Composable
 fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel, modifier: Modifier) {
     LazyColumn {
-        items(items = tradeList) {  
-            item -> 
+        items(items = tradeList) {
+            item ->
             TradeCard(trade = item)
         }
     }

@@ -14,6 +14,9 @@
     <string name="welcome">Velkommen</string>
     <string name="sign_in_with_google">Logg Inn Med Google</string>
     <string name="loggut">Logg Ut</string>
+    <string name="username">Brukernavn</string>
+    <string name="Log">Log In With Email</string>
+    <string name="logingoogle">Logg Inn Med Google</string>
     <string name="you">You:</string>
     <string name="recents">Recents</string>
     <string name="search_contacts">Recents</string>
