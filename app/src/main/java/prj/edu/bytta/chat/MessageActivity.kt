@@ -25,7 +25,6 @@ class MessageActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-
                     MessageView()
                     //Conversation(SampleData.conversationSample)
                     //ChatView(userMessage = String.Companion)

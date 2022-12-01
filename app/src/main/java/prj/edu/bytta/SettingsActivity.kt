@@ -211,6 +211,31 @@ fun utseendeSettings(context: Context) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(16.dp, 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+
+
+        ) {
+
+
+            Text(
+                text = "Konto",
+                maxLines = 1,
+                textAlign = TextAlign.Center,
+
+                )
+
+
+        }
+        Divider(
+            modifier = Modifier
+                .height(10.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
 
                 .padding(16.dp, 0.dp),
 
@@ -218,7 +243,7 @@ fun utseendeSettings(context: Context) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text(text = "Meldinger")
+            Text(text = "Endre passord")
 
             Icon(
                 modifier = Modifier
@@ -232,6 +257,8 @@ fun utseendeSettings(context: Context) {
 
 
         }
+
+
 
 
 

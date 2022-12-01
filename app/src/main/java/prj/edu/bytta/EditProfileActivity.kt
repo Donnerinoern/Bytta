@@ -19,18 +19,24 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonDivider
 import prj.edu.bytta.main.CommonImage
@@ -69,16 +75,12 @@ fun ProfileScreen(viewModel: LoginViewModel ) {
     if (isLoading) {
         CommonProgressSpinner()
     } else {
-        val userData = viewModel.userData.value
-        var username by rememberSaveable { mutableStateOf(userData?.username ?: "") }
+
+
 
         val context = LocalContext.current
         ProfileContent(
-            viewModel = LoginViewModel(
-
-            ),
-            username = username,
-            onUsernameChange = { username = it },
+            viewModel = LoginViewModel(),
             onSave = { viewModel.updateProfile() },
             onBack = {
                 val intent = Intent(context, MinePosts::class.java)
@@ -96,8 +98,6 @@ fun ProfileScreen(viewModel: LoginViewModel ) {
 @Composable
 fun ProfileContent(
     viewModel: LoginViewModel,
-    username: String,
-    onUsernameChange: (String) -> Unit,
     onSave: () -> Unit,
     onBack: () -> Unit,
     onLogout: () -> Unit
@@ -106,6 +106,8 @@ fun ProfileContent(
     val scrollState = rememberScrollState()
     val imageUrl = viewModel.userData.value?.imageUrl
     val userName = viewModel.userName.value
+
+
 
     Column(
         modifier = Modifier
@@ -135,10 +137,12 @@ fun ProfileContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
+
+
             OutlinedTextField(
                 value = userName,
+                onValueChange = { viewModel.setUserName(it)},
                 label = { Text(text = stringResource(R.string.username)) },
-                onValueChange = { viewModel.setUserName(it) },
                 colors = TextFieldDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent

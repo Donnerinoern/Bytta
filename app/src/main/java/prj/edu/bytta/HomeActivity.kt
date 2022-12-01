@@ -66,8 +66,9 @@ fun Content(
                 Button (
                     content = { Text(text = stringResource(R.string.loggut))},
                     onClick = {
+                        navController.navigate("login_screen")
                         viewModel.signOut()
-                        navController.navigate("login_screen") }
+                         }
                 )
             },
         bottomBar = {
