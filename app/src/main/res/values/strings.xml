@@ -4,7 +4,6 @@
     <string name="password_bg">Passord</string>
     <string name="log_in">Logg Inn</string>
     <string name="sign_up">Lag Bruker</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">Logg Inn</string>
     <string name="password">Passord</string>

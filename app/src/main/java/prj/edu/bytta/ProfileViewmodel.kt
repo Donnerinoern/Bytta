@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
 
 
@@ -18,6 +19,9 @@ class ProfileViewmodel : ComponentActivity() {
     val password: State<String> = _password
     val _userEmail = mutableStateOf("")
     val userEmail: State<String> = _userEmail
+    val _newName = mutableStateOf("")
+    val newName: State<String> = _newName
+
 
     // Setters
     fun setUserEmail(email: String) {
@@ -26,6 +30,10 @@ class ProfileViewmodel : ComponentActivity() {
 
     fun setPassword(password: String) {
         _password.value = password
+    }
+
+    fun setNewName(newname: String) {
+        _newName.value = newname
     }
 
 
@@ -44,34 +52,30 @@ class ProfileViewmodel : ComponentActivity() {
     }
 
 
+    fun updateProfile() {
 
-
-    fun updateEmail(email: String) {
-        // [START update_email]
         val user = Firebase.auth.currentUser
 
-
-                    user!!.updateEmail(_userEmail.toString())
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.d(TAG, "User email address updated.")
-                            } else {
-                                Log.d(TAG, "ERRRROORRR")
-
-
-                            }
-                        }
-                    }
+        val profileUpdates = userProfileChangeRequest {
+            displayName = newName.value
+        }
+        user!!.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    getCurrentUser()
+                    Log.d(TAG, "Oppdatert profil")
                 }
+            }
+    }
 
 
-    fun getCurrentUser(): FirebaseUser? {
+    private fun getCurrentUser(): FirebaseUser? {
         val user = Firebase.auth.currentUser
         Log.d(TAG, "user display name: ${user?.displayName}, email: ${user?.email}")
         return user
     }
 
-
+}
 
 
 

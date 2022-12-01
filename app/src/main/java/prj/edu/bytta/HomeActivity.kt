@@ -116,7 +116,7 @@ fun TradeCard(trade: TradeData) {
             Spacer(modifier = Modifier.width(8.dp))
 
             Column {
-                Text(text = trade.user!!)
+                //Text(text = trade.user!!)
                 // Add a vertical space between the author and message texts
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = trade.item!!)

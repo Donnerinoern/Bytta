@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,11 +60,9 @@ class MinePosts : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MinePostsScreen(
-                        viewModel = LoginViewModel(
-
-                        ), navController = NavController(context = LocalContext.current)
+                        viewModel = LoginViewModel(),
+                        navController = NavController(context = LocalContext.current)
                     )
-
                 }
             }
         }
@@ -130,7 +129,7 @@ class MinePosts : ComponentActivity() {
                 Column(modifier = Modifier.padding(8.dp)) {
 
                     val usernameDisplay =
-                        if (user?.displayName == null) "" else "@${user?.displayName}"
+                        if (user?.displayName == null) "" else "${user?.displayName}"
 
                     Text(text = usernameDisplay)
 
@@ -203,6 +202,8 @@ fun ProfileImage(imageUrl: String?, onClick: () -> Unit) {
         }
     }
 }
+
+
 
 
 

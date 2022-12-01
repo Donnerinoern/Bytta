@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.chat
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,12 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import prj.edu.bytta.chat.MeldingKonstanter
-import prj.edu.bytta.chat.MessageViewModel
+import androidx.navigation.NavController
+import prj.edu.bytta.SingleMessage
 
 @Composable
 fun MessageView(
-    messageViewModel: MessageViewModel = viewModel()
+    messageViewModel: MessageViewModel = viewModel(),
+    navController: NavController
 ) {
     val melding: String by messageViewModel.message.observeAsState(initial = "")
     val meldinger: List<Map<String, Any>> by messageViewModel.msg.observeAsState(
