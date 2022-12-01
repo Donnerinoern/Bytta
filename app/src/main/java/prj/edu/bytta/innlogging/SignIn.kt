@@ -13,6 +13,8 @@ import com.google.firebase.ktx.Firebase
 import prj.edu.bytta.HomeActivity
 import prj.edu.bytta.R
 
+// Firebase sin ferdiglagde UI
+// brukes hovedsakelig som login med Google
 
 class SignIn : AppCompatActivity() {
 

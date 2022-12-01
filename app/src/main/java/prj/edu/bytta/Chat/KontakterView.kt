@@ -1,4 +1,4 @@
-package prj.edu.bytta.Chat
+/*package prj.edu.bytta.Chat
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -185,3 +185,4 @@ class KontakterView {
         }
     }
 }
+*/
