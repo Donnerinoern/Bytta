@@ -1,10 +1,10 @@
-package prj.edu.bytta
+package prj.edu.bytta.innlogging
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
@@ -13,25 +13,30 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import prj.edu.bytta.HomeActivity
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
+import java.util.*
+
+const val USERS = "users"
 
 class LoginViewModel : ComponentActivity() {
 
     private var db = Firebase.firestore
-
-    // [START declare_auth]
+    private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
-    // [END declare_auth]
 
-    private val _isLoggedIn = mutableStateOf(false)
-    val isLoggedIn: State<Boolean> = _isLoggedIn
     val _error = mutableStateOf("")
     val error: State<String> = _error
     val _userName = mutableStateOf("")
@@ -55,22 +60,12 @@ class LoginViewModel : ComponentActivity() {
         _password.value = password
     }
 
-    fun setError(error: String.Companion) {
-        _error.value = error.toString()
-    }
-
-    init {
-        _isLoggedIn.value = getCurrentUser() != null
-    }
-
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // [START initialize_auth]
-        // Initialize Firebase Auth
         auth = Firebase.auth
-        // [END initialize_auth]
+
     }
 
     val inProgress = mutableStateOf(false)
@@ -82,33 +77,36 @@ class LoginViewModel : ComponentActivity() {
         Firebase.auth.createUserWithEmailAndPassword(userEmail.value, password.value)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    createOrUpdateProfile(username = userName.value)
+                    updateProfile()
                 } else {
-                // email already in use
-                        _error.value = "Email er allerede i bruk"
-                        Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
-            }
+                    // email already in use
+                    Log.w(TAG, "createUserWithEmailAndPassword:failure", task.exception)
+                    _error.value = "Email er allerede i bruk"
 
                 }
+
             }
+    }
 
     fun signInWithEmailAndPassword() {
         Firebase.auth.signInWithEmailAndPassword(userEmail.value, password.value)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "signInWithEmail:success")
+                    getCurrentUser()
                 } else {
                     // If sign in fails, display a message to the user.
-                    _error.value = "Feil brukernavn eller password"
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    _error.value = "Feil brukernavn eller password"
+
 
                 }
             }
     }
 
-        fun getCurrentUser(): FirebaseUser? {
+    fun getCurrentUser(): FirebaseUser? {
         val user = Firebase.auth.currentUser
-        Log.d(TAG, "user display name: ${user?.displayName}, email: ${user?.email}")
+        Log.d(TAG, "username: ${user?.displayName}, email: ${user?.email}")
         return user
     }
 
@@ -121,48 +119,21 @@ class LoginViewModel : ComponentActivity() {
     }
 
 
-    private fun createOrUpdateProfile(
-        username: String? = null,
-        imageUrl: String? = null
-    ){
-        val uid = Firebase.auth.currentUser?.uid
-        val userData = UserData(
-            userID = uid,
-            username = username ?: userName.value,
-            imageUrl = imageUrl ?: userData.value?.imageUrl
-        )
-        uid?.let { uid ->
-            inProgress.value = true
-            db.collection(USERS).document(uid).get().addOnSuccessListener {
-                if (it.exists()) {
-                    it.reference.update(userData.toMap())
-                        .addOnSuccessListener {
-                            this.userData.value = userData
-                            inProgress.value = false
-                        }
-                        .addOnFailureListener{
-                            handleException(it, "Cannot update user")
-                            Log.d(ContentValues.TAG, "Bruker eksisterer, kan ikke oppdatere")
-                            inProgress.value = false
-                        }
-                } else {
-                    db.collection(USERS).document(uid).set(userData)
-                    getUserData(uid)
-                    inProgress.value = false
-                }
-            }
-                .addOnFailureListener { exc ->
-                    handleException(exc, "Kan ikke lage bruker")
-                    Log.d(ContentValues.TAG, "Kan ikke lage bruker!")
-                    inProgress.value = false
-                }
-        }
+  fun updateProfile() {
 
-    }
+      val user = Firebase.auth.currentUser
 
-    private fun getUserData(uid: String) {
-
-    }
+      val profileUpdates = userProfileChangeRequest {
+          displayName = userName.value
+          photoUri = Uri.parse("")
+      }
+      user!!.updateProfile(profileUpdates)
+          .addOnCompleteListener { task ->
+              if (task.isSuccessful) {
+                  Log.d(TAG, "Oppdatert profil")
+              }
+          }
+  }
 
     private fun handleException(exception: Exception? = null, customMessage: String = ""){
                     exception?.printStackTrace()
@@ -170,6 +141,7 @@ class LoginViewModel : ComponentActivity() {
                     val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
                     popupNotification.value = Event(message)
                 }
+
     @Composable
     fun ErrorField() {
         Text(
@@ -180,6 +152,8 @@ class LoginViewModel : ComponentActivity() {
             fontWeight = FontWeight.Bold
         )
     }
+
+
     fun reload() {
 
     }

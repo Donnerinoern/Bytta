@@ -11,19 +11,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.main.NotificationMessage
+import prj.edu.bytta.navigering.Navigation
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 class MainActivity: ComponentActivity() {
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
 
+
+        setContent {
             ByttaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -31,26 +33,9 @@ class MainActivity: ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Navigation()
-                    ByttaApp()
                 }
             }
         }
 
     }
 }
-
-
-@Composable
-fun ByttaApp() {
-    val vm = SignupViewmodel(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
-
-
-    }
-
-
-
-
-
-
-
-

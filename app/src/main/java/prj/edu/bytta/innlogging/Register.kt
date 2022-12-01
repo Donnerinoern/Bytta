@@ -1,11 +1,7 @@
-package prj.edu.bytta
+package prj.edu.bytta.innlogging
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,16 +22,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.navArgument
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import prj.edu.bytta.ui.theme.ByttaTheme
-
+import prj.edu.bytta.R
 
 
 @Composable
 fun RegisterScreen(viewModel: LoginViewModel, navController: NavController) {
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -134,21 +127,23 @@ fun ButtonEmailPasswordRegister(viewModel: LoginViewModel, navController: NavCon
             .height(50.dp),
         enabled = viewModel.isValidEmailAndPassword(),
         content = { Text(text = stringResource(R.string.create)) },
-        onClick = { viewModel.createUserWithEmailAndPassword()
+        onClick = {
+            viewModel.createUserWithEmailAndPassword()
             if (user != null) {
                 navController.navigate("login_screen") {
                     Toast.makeText(
                         context,
-                        "Bruker Opprettet" ,
+                        "Bruker Opprettet",
                         Toast.LENGTH_SHORT
                     ).show()
                     viewModel.getCurrentUser()
                 }
-            } else
+            } else {
                 viewModel._error.value = "Email allerede i bruk"
             }
-
+        }
     )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

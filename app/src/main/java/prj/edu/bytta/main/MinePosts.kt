@@ -34,8 +34,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.R
+import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
@@ -52,10 +54,8 @@ class MinePosts : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MinePostsScreen(
-                        viewModel = SignupViewmodel(
-                            FirebaseAuth.getInstance(),
-                            FirebaseFirestore.getInstance(),
-                            FirebaseStorage.getInstance()
+                        viewModel = LoginViewModel(
+
                         )
                     )
 
@@ -67,12 +67,12 @@ class MinePosts : ComponentActivity() {
 
 
     @Composable
-    fun MinePostsScreen(viewModel: SignupViewmodel) {
-
+    fun MinePostsScreen(viewModel: LoginViewModel) {
+        val userName = viewModel.userName.value
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value
         val context = LocalContext.current
-
+        val user = Firebase.auth.currentUser
 
         Column {
 
@@ -120,9 +120,9 @@ class MinePosts : ComponentActivity() {
                 }
 
                 Column(modifier = Modifier.padding(8.dp)) {
-                    val usernameDisplay =
-                        if (userData?.username == null) "${CommonProgressSpinner()}" else "@${userData?.username}"
-                    Text(text = usernameDisplay)
+
+
+                    user?.displayName?.let { Text(text = it) }
                 }
 
 

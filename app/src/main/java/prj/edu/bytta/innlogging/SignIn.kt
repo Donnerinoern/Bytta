@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.innlogging
 
 
 import android.content.Intent
@@ -10,6 +10,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.HomeActivity
+import prj.edu.bytta.R
 
 
 class SignIn : AppCompatActivity() {
@@ -55,6 +57,7 @@ class SignIn : AppCompatActivity() {
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
                         .setLogo(R.drawable.ic_banner_foreground)
+                        .setIsSmartLockEnabled(false)
                 .build()
         signInLauncher.launch(signInIntent)
 

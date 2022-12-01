@@ -16,7 +16,7 @@ const val TRADES = "trades"
 @HiltViewModel
 class ByttaViewModel @Inject constructor(
     val auth: FirebaseAuth,
-    val db: FirebaseFirestore
+    private val db: FirebaseFirestore
 ) : ViewModel() {
 
     val inProgress = mutableStateOf(false)

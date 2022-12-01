@@ -17,9 +17,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.Chat.ChatroomActivity
+import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonProgressSpinner
 
 class HomeActivity : ComponentActivity() {
@@ -34,7 +37,12 @@ class HomeActivity : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()), LoginViewModel())
+                Content(
+                    ByttaViewModel(
+                        Firebase.auth,
+                        FirebaseFirestore.getInstance()),
+                    viewModel = LoginViewModel(),
+                    navController = NavController(context = LocalContext.current))
             }
         }
     }
@@ -42,41 +50,75 @@ class HomeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(vm: ByttaViewModel, loginViewModel: LoginViewModel) {
+fun Content(
+    vm: ByttaViewModel,
+    viewModel: LoginViewModel,
+    navController: NavController,
+) {
+
     val tradeDataLoading = vm.inProgress.value
     val trades = vm.trades.value
     val tradeFeedLoading = vm.tradesFeedProgress
-    val context = LocalContext.current
+    val user = Firebase.auth.currentUser
     Scaffold(
         topBar = {
+            Button (
+                content = { Text(text = stringResource(R.string.loggut))},
+                onClick = { loginViewModel.signOut()
+                    viewModel.signOut()
+                    navController.navigate("login_screen") }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Content(db: FirebaseFirestore, trade: Trade, viewModel: LoginViewModel) {
+    val context = LocalContext.current
+    var selectedItem by remember { mutableStateOf(0) }
+    val items = listOf("Home", "Profile", "Messages")
+    val icons = listOf(
+        Icons.Default.Home,
+        Icons.Default.Person,
+        Icons.Default.Email
+        )
+    val intents = listOf(
+        HomeActivity::class.java,
+        ProfileActivity::class.java,
+        MessageActivity::class.java
+    )
+    db.collection("trades")
+        .get()
+    Scaffold(
+    topBar = {
+
+             Button (
+                 content = { Text(text = stringResource(R.string.loggut))},
+                 onClick = { viewModel.signOut()
+                     val intent = Intent(context, Login::class.java)
+                     context.startActivity(intent)}
+                     )
+    },
+        bottomBar = {
+            BottomAppBar {
+                NavigationBar() {
+
+                    items.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            icon = {Icon(imageVector = icons[index], contentDescription = items[index])},
+                            label = {Text(item)},
+                            selected = selectedItem == index,
+                            onClick = { selectedItem = index
+                                val intent = Intent(context, intents[index])
+                                context.startActivity(intent)}
+                        )
+                    }
+                }
+            )
         },
         bottomBar = {
             NavBar()
         }
     ) {
         paddingValues ->
-        Column() {
-            Row() {
-                Button (
-                    content = { Text(text = "New trade")},
-                    onClick = {
-                        /*loginViewModel.signOut()*/
-                        val intent = Intent(context, NewTrade::class.java)
-                        context.startActivity(intent)
-                    }
-                )
-                Button (
-                    content = { Text(text = "Log out")},
-                    onClick = {
-                        loginViewModel.signOut()
-                        val intent = Intent(context, Login::class.java)
-                        context.startActivity(intent)
-                    }
-                )
-            }
-            TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
-        }
+        TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
     }
 }
 

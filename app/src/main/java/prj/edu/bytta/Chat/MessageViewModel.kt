@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.Chat
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.MeldingKonstanter
 import prj.edu.bytta.MeldingKonstanter.TAG
 import java.lang.IllegalArgumentException
 
@@ -73,36 +74,9 @@ class MessageViewModel : ViewModel() {
             }
     }
 
-
     // Oppdaterer listen med detaljer fra firestore
     private fun updateMeldinger(list: MutableList<Map<String, Any>>) {
         meldinger.value = list.asReversed()
         Log.d(TAG, "Melding: ${meldinger.value}")
     }
-/*
-    private fun listenToDocumentLocal() {
-        val docRef = Firebase.firestore.collection("meldinger").document("")
-        docRef.addSnapshotListener{ snapshot, e ->
-            if (e != null) {
-                Log.w(MeldingKonstanter.TAG, "Listen failed." , e)
-                return@addSnapshotListener
-            }
-            val source = if (snapshot != null && snapshot.metadata.hasPendingWrites())
-                "Local"
-            else
-                "Server"
-            if (snapshot != null && snapshot.exists()) {
-                Log.d(MeldingKonstanter.TAG, "$source data: ${snapshot.data}")
-            } else
-                Log.d(MeldingKonstanter.TAG, "$source data :null")
-
-        }
-    }
-    internal fun runAll() {
-        Log.d(TAG, "______ Begin_____")
-        listenToDocumentLocal()
-    }
-*/
-
-
 }

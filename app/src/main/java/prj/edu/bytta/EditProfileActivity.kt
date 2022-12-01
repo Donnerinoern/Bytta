@@ -1,6 +1,7 @@
 package prj.edu.bytta
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -15,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,8 +26,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -34,6 +38,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
+import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonDivider
 import prj.edu.bytta.main.CommonImage
 import prj.edu.bytta.main.CommonProgressSpinner
@@ -54,10 +60,8 @@ class EditProfileActivity : ComponentActivity() {
                     ) {
 
                     ProfileScreen(
-                        viewModel = SignupViewmodel(
-                            FirebaseAuth.getInstance(),
-                            FirebaseFirestore.getInstance(),
-                            FirebaseStorage.getInstance()
+                        viewModel = LoginViewModel(
+
                         )
                     )
 
@@ -68,7 +72,7 @@ class EditProfileActivity : ComponentActivity() {
 }
 
 @Composable
-fun ProfileScreen(viewModel: SignupViewmodel) {
+fun ProfileScreen(viewModel: LoginViewModel ) {
     val isLoading = viewModel.inProgress.value
     if (isLoading) {
         CommonProgressSpinner()
@@ -78,14 +82,12 @@ fun ProfileScreen(viewModel: SignupViewmodel) {
 
         val context = LocalContext.current
         ProfileContent(
-            viewModel = SignupViewmodel(
-                FirebaseAuth.getInstance(),
-                FirebaseFirestore.getInstance(),
-                FirebaseStorage.getInstance()
+            viewModel = LoginViewModel(
+
             ),
             username = username,
             onUsernameChange = { username = it },
-            onSave = { viewModel.updateProfileData(username) },
+            onSave = { viewModel.updateProfile() },
             onBack = {
                 val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
@@ -101,7 +103,7 @@ fun ProfileScreen(viewModel: SignupViewmodel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileContent(
-    viewModel: SignupViewmodel,
+    viewModel: LoginViewModel,
     username: String,
     onUsernameChange: (String) -> Unit,
     onSave: () -> Unit,
@@ -111,6 +113,7 @@ fun ProfileContent(
 ) {
     val scrollState = rememberScrollState()
     val imageUrl = viewModel.userData.value?.imageUrl
+    val userName = viewModel.userName.value
 
     Column(
         modifier = Modifier
@@ -129,9 +132,7 @@ fun ProfileContent(
 
         CommonDivider()
 
-        ProfileImage(imageUrl = imageUrl, viewModel = SignupViewmodel(  FirebaseAuth.getInstance(),
-            FirebaseFirestore.getInstance(),
-            FirebaseStorage.getInstance()) )
+        ProfileImage(imageUrl = imageUrl, viewModel = LoginViewModel())
 
         CommonDivider()
 
@@ -142,7 +143,16 @@ fun ProfileContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
-            OutlinedTextField(value = username, onValueChange = onUsernameChange)
+            OutlinedTextField(
+                value = userName,
+                label = { Text(text = stringResource(R.string.username)) },
+                onValueChange = { viewModel.setUserName(it) },
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(8.dp),
+            )
         }
 
         Row(
@@ -159,13 +169,13 @@ fun ProfileContent(
 
 
 @Composable
-fun ProfileImage(imageUrl: String?, viewModel: SignupViewmodel) {
+fun ProfileImage(imageUrl: String?, viewModel: LoginViewModel) {
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ){uri: Uri? ->
 
-        uri?.let { viewModel.uploadProfileImage(uri) }
+        uri?.let {  }
     }
 
     Box(modifier = Modifier.height(IntrinsicSize.Min)) {
