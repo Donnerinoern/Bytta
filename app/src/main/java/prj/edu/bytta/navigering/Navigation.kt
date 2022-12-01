@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.navigering
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -7,6 +7,11 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.*
+import prj.edu.bytta.innlogging.LoginScreen
+import prj.edu.bytta.innlogging.LoginViewModel
+import prj.edu.bytta.innlogging.RegisterScreen
+import prj.edu.bytta.innlogging.TilbakeKnapp
 
 
 @Composable
@@ -40,6 +45,7 @@ fun Navigation(){
             navController = navController,
             vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()),
             viewModel = LoginViewModel()
+
         )
         })
 

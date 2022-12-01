@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import prj.edu.bytta.innlogging.LoginViewModel
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +34,12 @@ class HomeActivity : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                 }*/
-                Content(ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()), viewModel = LoginViewModel(), navController = NavController(context = LocalContext.current))
+                Content(
+                    ByttaViewModel(
+                        Firebase.auth,
+                        FirebaseFirestore.getInstance()),
+                    viewModel = LoginViewModel(),
+                    navController = NavController(context = LocalContext.current))
             }
         }
     }
@@ -41,10 +47,18 @@ class HomeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(vm: ByttaViewModel, viewModel: LoginViewModel, navController: NavController) {
+fun Content(
+    vm: ByttaViewModel,
+    viewModel: LoginViewModel,
+    navController: NavController,
+) {
+
     val tradeDataLoading = vm.inProgress.value
     val trades = vm.trades.value
     val tradeFeedLoading = vm.tradesFeedProgress
+    val user = Firebase.auth.currentUser
+
+
     Scaffold(
             topBar = {
                 Button (

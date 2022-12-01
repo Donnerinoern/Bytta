@@ -37,6 +37,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.R
+import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 

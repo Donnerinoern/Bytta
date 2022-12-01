@@ -23,8 +23,8 @@ import coil.compose.ImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.google.android.material.progressindicator.CircularProgressIndicator
-import prj.edu.bytta.LoginViewModel
 import prj.edu.bytta.data.Event
+import prj.edu.bytta.innlogging.LoginViewModel
 
 val popupNotification = mutableStateOf<Event<String>?>(null)
 
