@@ -3,9 +3,12 @@ package prj.edu.bytta.main
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.firebase.ui.auth.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -43,6 +47,9 @@ class MinePosts : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
         setContent {
 
             ByttaTheme {
@@ -54,7 +61,7 @@ class MinePosts : ComponentActivity() {
                     MinePostsScreen(
                         viewModel = LoginViewModel(
 
-                        )
+                        ), navController = NavController(context = LocalContext.current)
                     )
 
                 }
@@ -64,13 +71,16 @@ class MinePosts : ComponentActivity() {
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun MinePostsScreen(viewModel: LoginViewModel) {
+    fun MinePostsScreen(navController: NavController, viewModel: LoginViewModel) {
         val userName = viewModel.userName.value
         val userData = viewModel.userData.value
         val isLoading = viewModel.inProgress.value
         val context = LocalContext.current
         val user = Firebase.auth.currentUser
+
+
 
         Column {
 
@@ -119,14 +129,20 @@ class MinePosts : ComponentActivity() {
 
                 Column(modifier = Modifier.padding(8.dp)) {
 
+                    val usernameDisplay =
+                        if (user?.displayName == null) "" else "@${user?.displayName}"
 
-                    user?.displayName?.let { Text(text = it) }
+                    Text(text = usernameDisplay)
+
+                    // user?.displayName?.let { Text(text = it) }
                 }
 
 
                 OutlinedButton(
-                    onClick = {    val intent = Intent(context, EditProfileActivity::class.java)
-                        context.startActivity(intent)},
+                    onClick = {
+                        val intent = Intent(context, EditProfileActivity::class.java)
+                        context.startActivity(intent)
+                    },
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth(),
@@ -134,6 +150,17 @@ class MinePosts : ComponentActivity() {
 
                 ) {
                     Text(text = "Rediger profil")
+                }
+
+                OutlinedButton(
+                    onClick = { navController.navigate("new_post") },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10)
+
+                ) {
+                    Text(text = "Lag trade")
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(text = "Trades list")
