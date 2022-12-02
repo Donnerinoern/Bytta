@@ -1,6 +1,7 @@
 package prj.edu.bytta
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,8 @@ import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import prj.edu.bytta.main.popupNotification
 import java.util.*
+import prj.edu.bytta.MeldingKonstanter.TAG
+import java.util.*
 import javax.inject.Inject
 
 const val USERS = "users"
@@ -25,8 +28,8 @@ const val TRADES = "trades"
 @HiltViewModel
 class ByttaViewModel @Inject constructor(
     val auth: FirebaseAuth,
-    private val db: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    val db: FirebaseFirestore,
+    val storage: FirebaseStorage
 ) : ViewModel() {
 
     val signedIn = mutableStateOf(false)
@@ -38,7 +41,7 @@ class ByttaViewModel @Inject constructor(
     val tradesFeedProgress = mutableStateOf(false)
 
     init {
-        val currentUser = Firebase.auth.currentUser
+        val currentUser = auth.currentUser
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
             getUserData(uid)
@@ -131,11 +134,6 @@ class ByttaViewModel @Inject constructor(
             }
     }
 
-
-
-
-
-
     private fun uploadImage(uri: Uri, onSuccess: (Uri) -> Unit) {
         inProgress.value = true
 
@@ -163,17 +161,30 @@ class ByttaViewModel @Inject constructor(
         }
     }
 
+    fun uploadTrade(uri: Uri, body: String, item: String) {
+        inProgress.value = true
 
+        val storageRef = storage.reference
+        val uuid = UUID.randomUUID()
+        val imageRef = storageRef.child("images/$uuid")
+        val uploadTask = imageRef.putFile(uri)
 
+        uploadTask.addOnSuccessListener {
+            val result = it.metadata?.reference?.downloadUrl
+            result?.addOnSuccessListener(){}
+        }
+            .addOnFailureListener{exc ->
+                inProgress.value = false
+            }
+        val tradeData = TradeData(body, item, getCurrentUser()?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
+        db.collection("trades")
+            .add(tradeData)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
 
-
-
-
-
-
-
-
-
-
-
+    }
 }

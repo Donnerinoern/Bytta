@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -47,6 +48,14 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".NewTrade"
+            android:exported="true">
+            <meta-data
+                android:inputType="textEmailAddress"
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".innlogging.SignIn" android:theme="@style/Theme.AppCompat.DayNight"
             android:exported="true">
             <intent-filter>
@@ -57,7 +66,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".chat.MessageActivity"
             android:exported="true">
@@ -104,7 +112,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -120,13 +127,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
-
     </application>
 
 </manifest>

@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.chat.ChatPage
@@ -18,7 +19,7 @@ import prj.edu.bytta.innlogging.TilbakeKnapp
 
 // NavController for navigering i appen
 @Composable
-fun Navigation(){
+fun Navigation() {
     val navController = rememberNavController()
 
 // Navhost skal egentlig ikke være loginscreen, men homescreen.
@@ -31,42 +32,52 @@ fun Navigation(){
         startDestination = "login_screen",
         builder = {
 
-        composable(
-            "login_screen", content = { LoginScreen(
-            navController = navController,
-            viewModel = LoginViewModel()
-        )
-        })
-        composable(
-            "register_screen", content = { RegisterScreen(
-            navController = navController,
-            viewModel = LoginViewModel()
-        )
-        })
-        composable(
-            "tilbake_knapp", content = { TilbakeKnapp(
-            navController = navController
-        )
-        })
-         composable(
-             "home_screen", content = { Content(
-            navController = navController,
-            vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), Firebase.storage),
-            viewModel = LoginViewModel()
+            composable(
+                "login_screen", content = {
+                    LoginScreen(
+                        navController = navController,
+                        viewModel = LoginViewModel()
+                    )
+                })
+            composable(
+                "register_screen", content = {
+                    RegisterScreen(
+                        navController = navController,
+                        viewModel = LoginViewModel()
+                    )
+                })
+            composable(
+                "tilbake_knapp", content = {
+                    TilbakeKnapp(
+                        navController = navController
+                    )
+                })
+            composable(
+                "home_screen", content = {
+                    Content(
+                        navController = navController,
+                        vm = ByttaViewModel(
+                            Firebase.auth,
+                            FirebaseFirestore.getInstance(),
+                            Firebase.storage
+                        ),
+                        viewModel = LoginViewModel()
 
-        )
-        })
-        composable(
-            "chat_page", content = { ChatPage()
-            }
-        )
-        composable(
-            "message_view", content = { MessageView(
-                navController = navController,
+                    )
+                })
+            composable(
+                "chat_page", content = {
+                    ChatPage()
+                }
             )
-            }
-        )
-})
+            composable(
+                "message_view", content = {
+                    MessageView(
+                        navController = navController,
+                    )
+                }
+            )
+        })
 }
 
 
