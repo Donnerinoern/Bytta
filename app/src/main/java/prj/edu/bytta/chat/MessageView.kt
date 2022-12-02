@@ -21,9 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import prj.edu.bytta.R
-import prj.edu.bytta.SingleMessage
-import prj.edu.bytta.chat.MeldingKonstanter
-import prj.edu.bytta.chat.MessageViewModel
 
 @Composable
 fun MessageView(

@@ -1,7 +1,6 @@
 package prj.edu.bytta.innlogging
 
 import android.content.ContentValues.TAG
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -17,9 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 

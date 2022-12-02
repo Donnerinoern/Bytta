@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.chat
 
 import android.content.Intent
 import androidx.compose.foundation.Image
@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.Text
+import prj.edu.bytta.R
 import prj.edu.bytta.chat.MessageActivity
 import prj.edu.bytta.home.Trade
 import java.util.*
