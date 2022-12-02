@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import prj.edu.bytta.*
+import prj.edu.bytta.home.Trade
 
 class ChatroomActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

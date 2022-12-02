@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.profil
 
 import android.content.Intent
 import android.net.Uri
@@ -21,19 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import prj.edu.bytta.R
+import prj.edu.bytta.home.ByttaViewModel
 import prj.edu.bytta.innlogging.LoginViewModel
-import prj.edu.bytta.main.CommonDivider
-import prj.edu.bytta.main.CommonImage
-import prj.edu.bytta.main.CommonProgressSpinner
-import prj.edu.bytta.main.MinePosts
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 

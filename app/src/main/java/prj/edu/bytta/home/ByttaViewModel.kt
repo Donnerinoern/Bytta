@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.home
 
 import android.net.Uri
 import android.util.Log
@@ -16,7 +16,7 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
-import prj.edu.bytta.main.popupNotification
+import prj.edu.bytta.profil.popupNotification
 import java.util.*
 import prj.edu.bytta.chat.MeldingKonstanter.TAG
 import prj.edu.bytta.innlogging.LoginViewModel

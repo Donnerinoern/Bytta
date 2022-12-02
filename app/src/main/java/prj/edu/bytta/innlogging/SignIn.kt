@@ -10,8 +10,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import prj.edu.bytta.HomeActivity
 import prj.edu.bytta.R
+import prj.edu.bytta.home.HomeActivity
 
 // Firebase sin ferdiglagde UI
 // brukes hovedsakelig som login med Google

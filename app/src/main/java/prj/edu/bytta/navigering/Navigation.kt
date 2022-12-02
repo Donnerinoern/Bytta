@@ -12,6 +12,8 @@ import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.chat.ChatPage
 import prj.edu.bytta.chat.MessageView
+import prj.edu.bytta.home.ByttaViewModel
+import prj.edu.bytta.home.Content
 import prj.edu.bytta.innlogging.LoginScreen
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.innlogging.RegisterScreen
@@ -52,7 +54,7 @@ fun Navigation() {
          composable(
              "home_screen", content = { Content(
             navController = navController,
-            vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()),
+            vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), Firebase.storage),
             viewModel = LoginViewModel()
 
         )

@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.home
 
 import android.content.Intent
 import android.net.Uri
@@ -25,8 +25,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import prj.edu.bytta.NavBar
+import prj.edu.bytta.R
 import prj.edu.bytta.innlogging.LoginViewModel
-import prj.edu.bytta.main.CommonProgressSpinner
+import prj.edu.bytta.profil.CommonProgressSpinner
 
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

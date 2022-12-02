@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.home
 
 import android.net.Uri
 

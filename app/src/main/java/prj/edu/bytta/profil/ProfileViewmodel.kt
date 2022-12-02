@@ -1,4 +1,4 @@
-package prj.edu.bytta
+package prj.edu.bytta.profil
 
 import android.content.ContentValues.TAG
 import android.os.Bundle

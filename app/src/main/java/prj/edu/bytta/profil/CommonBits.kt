@@ -1,4 +1,4 @@
-package prj.edu.bytta.main
+package prj.edu.bytta.profil
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

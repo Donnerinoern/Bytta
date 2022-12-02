@@ -12,7 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import prj.edu.bytta.chat.ChatroomActivity
-import prj.edu.bytta.main.MinePosts
+import prj.edu.bytta.home.HomeActivity
+import prj.edu.bytta.profil.MinePosts
 
 @Composable
 fun NavBar() {
