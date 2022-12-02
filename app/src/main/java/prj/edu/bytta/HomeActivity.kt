@@ -1,7 +1,7 @@
 package prj.edu.bytta
 
-import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,15 +14,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import prj.edu.bytta.Chat.ChatroomActivity
+import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonProgressSpinner
 
@@ -41,7 +43,9 @@ class HomeActivity : ComponentActivity() {
                 Content(
                     ByttaViewModel(
                         Firebase.auth,
-                        FirebaseFirestore.getInstance()),
+                        FirebaseFirestore.getInstance(),
+                        FirebaseStorage.getInstance()
+                    ),
                     viewModel = LoginViewModel(),
                     navController = NavController(context = LocalContext.current))
             }
@@ -61,8 +65,18 @@ fun Content(
     val trades = vm.trades.value
     val tradeFeedLoading = vm.tradesFeedProgress
     val user = Firebase.auth.currentUser
+    val context = LocalContext.current
     Scaffold(
             topBar = {
+
+            },
+        bottomBar = {
+            NavBar()
+        }
+    ) {
+        paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            Row() {
                 Button (
                     content = { Text(text = stringResource(R.string.loggut))},
                     onClick = {
@@ -70,13 +84,17 @@ fun Content(
                         viewModel.signOut()
                     }
                 )
-            },
-        bottomBar = {
-            NavBar()
+                Button (
+                    content = { Text(text = "New trade")},
+                    onClick = {
+                        /*loginViewModel.signOut()*/
+                        val intent = Intent(context, NewTrade::class.java)
+                        context.startActivity(intent)
+                    }
+                )
+            }
+            TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
         }
-    ) {
-        paddingValues ->
-        TradesList(tradeList = trades, loading = tradeDataLoading, vm = vm, modifier = Modifier.padding(paddingValues))
     }
 }
 
@@ -85,7 +103,7 @@ fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel,
     LazyColumn {
         items(items = tradeList) {
             item ->
-            TradeCard(trade = item)
+            TradeCard(trade = item, storage = vm.storage)
         }
     }
     if (loading) {
@@ -95,7 +113,13 @@ fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TradeCard(trade: TradeData) {
+fun TradeCard(trade: TradeData, storage: FirebaseStorage) {
+    /*val storageRef = storage.reference
+    var uri: Uri? = null
+    storageRef.child("images/${trade.imageURI}").downloadUrl.addOnSuccessListener {
+        image ->
+        uri = image
+    }*/
     Spacer(modifier = Modifier.height(5.dp))
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -122,6 +146,18 @@ fun TradeCard(trade: TradeData) {
                 Text(text = trade.item!!)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = trade.body!!)
+                Spacer(modifier = Modifier.height(4.dp))
+                Image(
+                    painter = rememberImagePainter(
+                        data = trade.imageURI,
+                        builder = {
+                            crossfade(false)
+                            placeholder(R.drawable.spinner)
+                        }
+                    ),
+                    contentDescription = "description",
+                    contentScale = ContentScale.Crop
+                )
             }
         }
     }
