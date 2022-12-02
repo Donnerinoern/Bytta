@@ -14,6 +14,7 @@ import prj.edu.bytta.chat.ChatPage
 import prj.edu.bytta.chat.MessageView
 import prj.edu.bytta.home.ByttaViewModel
 import prj.edu.bytta.home.Content
+import prj.edu.bytta.home.NewTradeContent
 import prj.edu.bytta.innlogging.LoginScreen
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.innlogging.RegisterScreen
@@ -81,7 +82,8 @@ fun Navigation() {
             composable(
                 "new_trade", content = { NewTradeContent(
                     navController = navController,
-                    vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
+                    vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), FirebaseStorage.getInstance()),
+                    viewModel = LoginViewModel()
                 )})
 })
 
