@@ -3,6 +3,7 @@ package prj.edu.bytta
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -12,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -27,6 +30,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.innlogging.Login
 import prj.edu.bytta.innlogging.LoginViewModel
+import prj.edu.bytta.innlogging.LoginScreen
 import prj.edu.bytta.main.CommonProgressSpinner
 
 class HomeActivity : ComponentActivity() {
@@ -77,16 +81,7 @@ fun Content(
     ) {
         paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            Row() {
-                Button (
-                    content = { Text(text = stringResource(R.string.loggut))},
-                    onClick = {
-                        //navController.navigate("login_screen")
-                        val intent = Intent(context, Login::class.java)
-                        viewModel.signOut()
-                        context.startActivity(intent)
-                    }
-                )
+            Row(modifier = Modifier.align(CenterHorizontally)) {
                 Button (
                     content = { Text(text = "New trade")},
                     onClick = {
@@ -133,18 +128,14 @@ fun TradeCard(trade: TradeData, storage: FirebaseStorage) {
                 painter = painterResource(R.drawable.ic_user),
                 contentDescription = "Contact profile picture",
                 modifier = Modifier
-                    // Set image size to 40 dp
                     .size(40.dp)
-                    // Clip image to be shaped as a circle
                     .clip(CircleShape)
             )
 
-            // Add a horizontal space between the image and the column
             Spacer(modifier = Modifier.width(8.dp))
 
             Column {
-                //Text(text = trade.user!!)
-                // Add a vertical space between the author and message texts
+                Text(text = trade.user!!)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = trade.item!!)
                 Spacer(modifier = Modifier.height(4.dp))

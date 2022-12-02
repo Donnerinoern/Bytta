@@ -18,7 +18,8 @@ import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import prj.edu.bytta.main.popupNotification
 import java.util.*
-import prj.edu.bytta.MeldingKonstanter.TAG
+import prj.edu.bytta.chat.MeldingKonstanter.TAG
+import prj.edu.bytta.innlogging.LoginViewModel
 import javax.inject.Inject
 
 const val USERS = "users"
@@ -174,7 +175,8 @@ class ByttaViewModel @Inject constructor(
             .addOnFailureListener{exc ->
                 inProgress.value = false
             }
-        val tradeData = TradeData(body, item, getCurrentUser()?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
+        val vm: LoginViewModel = LoginViewModel()
+        val tradeData = TradeData(body, item, Firebase.auth.currentUser?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
         db.collection("trades")
             .add(tradeData)
             .addOnSuccessListener { documentReference ->

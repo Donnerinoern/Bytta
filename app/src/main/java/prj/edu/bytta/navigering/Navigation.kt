@@ -10,6 +10,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
+import prj.edu.bytta.chat.ChatPage
+import prj.edu.bytta.chat.MessageView
 import prj.edu.bytta.innlogging.LoginScreen
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.innlogging.RegisterScreen
