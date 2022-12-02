@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.size.Size
-import prj.edu.bytta.chat.Brukern
 import prj.edu.bytta.chat.MessageActivity
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -88,105 +87,6 @@ fun UserCard(trade: Trade,) {
        }
 }
 
-@Composable
-fun UserRow(user: Brukern, modifier: Modifier = Modifier) {
-    @Composable
-    fun OnlineIndicator() {
-        Box(
-            Modifier
-                .size(15.dp)
-                .clip(CircleShape)
-        )
-    }
-    Row (
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(20.dp)
-        ){
-        PB(url = user.profileImageUrl, modifier = Modifier.padding(end = 15.dp))
-        Column(
-            modifier = Modifier
-                .weight(1f, fill = true)
-        ) {
-            Text(
-                user.navn,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                lastActiveStatus(user),
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(top = 5.dp),
-                fontSize = 10.sp
-            )
-        }
-        if (user.isOnline) {
-            OnlineIndicator()
-        }
-    }
-}
 
-@Composable
-@ReadOnlyComposable
-private fun lastActiveStatus(user: Brukern): String {
-    return when {
-        user.isOnline -> stringResource(R.string.bruker_online)
-        else -> stringResource(
-            R.string.bruker_sist_på,
-            DateUtils.getRelativeTimeSpanString(user.lastOnline.time)
-        )
-    }
-}
-@Composable
-fun PB(
-    url: String,
-    modifier: Modifier = Modifier,
-) {
-    val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(url)
-            .size(Size.ORIGINAL)
-            .build()
-    )
-    Image(
-        painter = painter,
-        contentDescription = null,
-        modifier = modifier
-            .size(60.dp)
-            .clip(RoundedCornerShape(10.dp))
-    )
-}
-fun xd(size: Int = 30): List<Brukern> {
-    return List(size) { stagedKontaktList() }
-        .sortedByDescending { it.lastOnline }
-        .sortedByDescending { it.isOnline }
-}
-fun stagedKontaktList(): Brukern {
-    val names = listOf(
-        "Marky Mark",
-        "Breisås Kaffi slurpern",
-        "Gi meg no weed for fan",
-        "MetaQuestern",
-        "Knut :)",
-        "SibeWest",
-    )
-    return Brukern(
-        navn = names.random(),
-        isOnline = Random.nextFloat() < 0.4,
-        lastOnline = Date(
-            Random.nextLong(
-                minTime.toEpochMilli(),
-                maxTime.toEpochMilli()
-            )
-        ),
-        profileImageUrl = randomAvatarUrl(),
-        uid = "shgjkd",
-    )
-}
 
-private val maxTime = Instant.now()
-private val minTime = maxTime.minus(2, ChronoUnit.DAYS)
 
-fun randomAvatarUrl(): String {
-    val category = listOf("men", "women").random()
-    val index = (0..99).random()
-    return "https://randomuser.me/api/portraits/$category/$index.jpg"
-}

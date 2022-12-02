@@ -6,14 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import prj.edu.bytta.*
 
@@ -53,46 +49,22 @@ fun Chatroom() {
 
             }
         }
-        Search()
         Test()
     }
 }
 @Composable
 fun Test() {
     UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-    UserCard(Trade("Morten", "Basskasse", ""))
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Search() {
-    var text by remember{ mutableStateOf(TextFieldValue("")) }
-    TextField(
-        
-        value = text,
-        shape = RoundedCornerShape(20.dp),
-        label = { Text(text = "Søk i meldinger") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        onValueChange = {
-            it -> text = it
-        }
-    )
+    UserCard(Trade("Kurt", "Basskassehus", ""))
+    UserCard(Trade("Martin", "MetaQuest2", ""))
+    UserCard(Trade("Kalvin", "3Smashplater 190g", ""))
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatPage(
+
 ) {
 
     Scaffold(
