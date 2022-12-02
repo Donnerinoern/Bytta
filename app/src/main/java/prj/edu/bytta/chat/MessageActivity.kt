@@ -10,12 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
+import prj.edu.bytta.MessageView
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 class MessageActivity : ComponentActivity() {
     
 
-    @OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -27,13 +28,7 @@ class MessageActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     MessageView(navController = NavController(context = LocalContext.current))
-                    //Conversation(SampleData.conversationSample)
-                    //ChatView(userMessage = String.Companion)
-                    /*{
-                        val userId = it.arguments?.getString(ChatKonstanter.userId) ?: ""
-                        ChatViewBruker(userId = userId, back = { actions.navigateBack})
-                    }
-*/
+
 
                 }
             }

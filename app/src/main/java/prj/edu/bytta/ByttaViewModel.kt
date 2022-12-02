@@ -22,6 +22,7 @@ import prj.edu.bytta.chat.MeldingKonstanter.TAG
 import prj.edu.bytta.innlogging.LoginViewModel
 import java.util.*
 import javax.inject.Inject
+import kotlin.text.Typography.dagger
 
 const val USERS = "users"
 const val TRADES = "trades"
