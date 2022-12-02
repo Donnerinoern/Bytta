@@ -60,40 +60,41 @@ fun NewTradeContent(navController: NavController, vm: ByttaViewModel) {
     var itemDesc by remember{ mutableStateOf(TextFieldValue("")) }
     var itemText by remember{ mutableStateOf(TextFieldValue("")) }
 
-    Column {
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-        ){ uri: Uri? ->
+    Scaffold(bottomBar = { NavBar() }) {
+        paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues)) {
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.GetContent(),
+            ){ uri: Uri? ->
 
-            uri?.let { vm.uploadTrade(uri, itemDesc.text, itemText.text) }
-        }
+                uri?.let { vm.uploadTrade(uri, itemDesc.text, itemText.text) }
+            }
 
-        Box(modifier = Modifier.height(IntrinsicSize.Min)) {
-            Column(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Item name")
-                TextField(value = itemText, onValueChange = {itemText = it})
-
-                Text(text = "Item description")
-                TextField(value = itemDesc, onValueChange = {itemDesc = it})
-
-                Card(
-                    shape = RectangleShape,
+            Box(modifier = Modifier.height(IntrinsicSize.Min)) {
+                Column(
                     modifier = Modifier
                         .padding(8.dp)
-                        .size(100.dp)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Text(text = "Item name")
+                    TextField(value = itemText, onValueChange = {itemText = it})
+
+                    Text(text = "Item description")
+                    TextField(value = itemDesc, onValueChange = {itemDesc = it})
+
+                    Card(
+                        shape = RectangleShape,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(100.dp)
+                    ) {
+                    }
+                    Button(onClick = {launcher.launch("image/*")}, content = {Text("Upload image and save trade")})
                 }
-                Button(onClick = {launcher.launch("image/*")}, content = {Text("Upload image and save trade")})
             }
         }
-        NavBar()
     }
-
 }
 
 
