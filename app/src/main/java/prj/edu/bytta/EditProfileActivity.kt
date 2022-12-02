@@ -1,36 +1,25 @@
 package prj.edu.bytta
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
@@ -62,10 +51,11 @@ class EditProfileActivity : ComponentActivity() {
                     ) {
 
                     ProfileScreen(
-                        viewModel = ByttaViewModel(
-                        auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
+                        viewModel = LoginViewModel(),
+                        vieWmodel = ProfileViewmodel(),
+                        vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), Firebase.storage)
                         )
-                    )
+
 
                 }
             }
@@ -74,8 +64,13 @@ class EditProfileActivity : ComponentActivity() {
 }
 
 @Composable
-fun ProfileScreen(viewModel: ByttaViewModel) {
-    val isLoading = viewModel.inProgress.value
+fun ProfileScreen(
+    viewModel: LoginViewModel,
+    vieWmodel: ProfileViewmodel,
+    vm: ByttaViewModel
+) {
+
+    val isLoading = vm.inProgress.value
     if (isLoading) {
         CommonProgressSpinner()
     } else {
@@ -84,8 +79,9 @@ fun ProfileScreen(viewModel: ByttaViewModel) {
 
         val context = LocalContext.current
         ProfileContent(
-            viewModel = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage),
-            onSave = { },
+            viewModel = LoginViewModel(),
+            vieWmodel = ProfileViewmodel(),
+            onSave = { vieWmodel.updateUserName() },
             onBack = {
                 val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
@@ -101,7 +97,8 @@ fun ProfileScreen(viewModel: ByttaViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileContent(
-    viewModel: ByttaViewModel,
+    viewModel: LoginViewModel,
+    vieWmodel: ProfileViewmodel,
     onSave: () -> Unit,
     onBack: () -> Unit,
     onLogout: () -> Unit
@@ -109,7 +106,7 @@ fun ProfileContent(
 ) {
     val scrollState = rememberScrollState()
     val imageUrl = viewModel.userData.value?.imageUrl
-    val userName = viewModel.userName.value
+    val newName = vieWmodel.newName.value
 
 
 
@@ -130,7 +127,7 @@ fun ProfileContent(
 
         CommonDivider()
 
-        ProfileImage(imageUrl = imageUrl, viewModel = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage))
+        ProfileImage(imageUrl = imageUrl, vm = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage))
 
         CommonDivider()
 
@@ -143,9 +140,10 @@ fun ProfileContent(
             Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
 
 
+
             OutlinedTextField(
-                value = userName,
-                onValueChange = { },
+                value = newName,
+                onValueChange = { vieWmodel.setNewName(it)},
                 label = { Text(text = stringResource(R.string.username)) },
                 colors = TextFieldDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
@@ -154,29 +152,19 @@ fun ProfileContent(
                 shape = RoundedCornerShape(8.dp),
             )
         }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.Center
-
-        ) {
-            Text(text = "Logg ut", modifier = Modifier.clickable { onLogout.invoke() })
-        }
     }
 }
 
 // Kode som viser redigering av profilbilde
 
 @Composable
-fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {
+fun ProfileImage(imageUrl: String?, vm: ByttaViewModel) {
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ){uri: Uri? ->
 
-        uri?.let { viewModel.uploadProfileImage(uri) }
+        uri?.let { vm.uploadProfileImage(uri) }
     }
 
     Box(modifier = Modifier.height(IntrinsicSize.Min)) {
@@ -198,7 +186,7 @@ fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {
             Text(text = "Endre profilbilde")
         }
 
-        val isLoading = viewModel.inProgress.value
+        val isLoading = vm.inProgress.value
         if (isLoading)
             CommonProgressSpinner()
     }

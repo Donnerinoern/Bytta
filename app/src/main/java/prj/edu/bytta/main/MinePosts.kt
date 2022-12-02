@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,12 +62,12 @@ class MinePosts : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     MinePostsScreen(
-                        viewModel = ByttaViewModel(
+                        viewModel = LoginViewModel(),
+                        vm = ByttaViewModel(
                             auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
 
                         )
                     )
-
                 }
             }
         }
@@ -75,10 +76,8 @@ class MinePosts : ComponentActivity() {
 
 
     @Composable
-    fun MinePostsScreen( viewModel: ByttaViewModel) {
-        val userName = viewModel.userName.value
+    fun MinePostsScreen( vm: ByttaViewModel, viewModel: LoginViewModel) {
         val userData = viewModel.userData.value
-        val isLoading = viewModel.inProgress.value
         val context = LocalContext.current
         val user = Firebase.auth.currentUser
 
@@ -97,14 +96,6 @@ class MinePosts : ComponentActivity() {
                     ProfileImage(userData?.imageUrl) {
 
                     }
-
-                    Text(
-                        text = "15\ntrades",
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically),
-                        textAlign = TextAlign.Justify
-                    )
 
                     IconButton(
                         modifier = Modifier
@@ -132,17 +123,19 @@ class MinePosts : ComponentActivity() {
                 Column(modifier = Modifier.padding(8.dp)) {
 
                     val usernameDisplay =
-                        if (user?.displayName == null) "" else "@${user?.displayName}"
+                        if (user?.displayName == null) "" else "${user?.displayName}"
 
                     Text(text = usernameDisplay)
 
-                  // user?.displayName?.let { Text(text = it) }
+                    // user?.displayName?.let { Text(text = it) }
                 }
 
 
                 OutlinedButton(
-                    onClick = {    val intent = Intent(context, EditProfileActivity::class.java)
-                        context.startActivity(intent)},
+                    onClick = {
+                        val intent = Intent(context, EditProfileActivity::class.java)
+                        context.startActivity(intent)
+                    },
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth(),

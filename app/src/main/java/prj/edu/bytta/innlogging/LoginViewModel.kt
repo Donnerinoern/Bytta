@@ -1,7 +1,6 @@
 package prj.edu.bytta.innlogging
 
 import android.content.ContentValues.TAG
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,29 +12,20 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import prj.edu.bytta.HomeActivity
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
-import java.util.*
 
-const val USERS = "users"
 
 class LoginViewModel : ComponentActivity() {
 
-    private var db = Firebase.firestore
-    private lateinit var storage: FirebaseStorage
     private lateinit var auth: FirebaseAuth
 
     val _error = mutableStateOf("")
@@ -124,13 +114,12 @@ class LoginViewModel : ComponentActivity() {
 
     //Autorisering i Firebase holder kun email og passord.
     // Denne funksjonen gir en bruker et brukernavn evt bilde
-  fun updateProfile(imageUrl: String? = null) {
+    private fun updateProfile(imageUrl: String? = null) {
 
       val user = Firebase.auth.currentUser
 
       val profileUpdates = userProfileChangeRequest {
           displayName = userName.value
-          photoUri = Uri.parse(imageUrl)
       }
       user!!.updateProfile(profileUpdates)
           .addOnCompleteListener { task ->
@@ -151,9 +140,6 @@ class LoginViewModel : ComponentActivity() {
         )
     }
 
-    fun reload() {
-
-    }
 
     // Logger brukeren ut
      fun signOut() {

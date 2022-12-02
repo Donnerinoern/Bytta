@@ -3,7 +3,6 @@ package prj.edu.bytta.innlogging
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -26,9 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import okhttp3.Response
 import prj.edu.bytta.R
-import prj.edu.bytta.data.UserData
 import prj.edu.bytta.ui.theme.ByttaTheme
 
 
@@ -53,7 +50,6 @@ class Login: ComponentActivity() {
         }
 
     }
-
 }
 
 @Composable

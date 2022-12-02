@@ -1,5 +1,6 @@
-package prj.edu.bytta
+package prj.edu.bytta.chat
 
+import androidx.annotation.Keep
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -18,38 +19,56 @@ object MeldingKonstanter {
         const val BRUKER = "brukeren"
 
 }
-// Konstanter for chatmeldinger og laging av kontakter
-class ChatKonstanter(
-        val id: String,
-        val text: String,
-        val fromId: String,
-        val toId: String,
-        val timestamp: String,
-        val time: Long
-) {
-        constructor(): this("","","","","",-1)
 
-        var imageUrl: String? = null
-        var fileUrl: String? = null
-        var fileSize: Double? = null
-        var fileType: String? = null
 
-        //Bilde melding
-        constructor(id:String, text: String, fromId: String, toId: String, timestamp: String,
-        time: Long, imageUrl: String) : this (id, text, fromId, toId, timestamp, time) {
-                this.imageUrl = imageUrl
-        }
+object FirestoreKonstanter {
+        // Bruker collection
 
-        constructor(id: String, text: String, fromId: String, toId: String, timestamp: String, time: Long, fileUrl: String, fileSize: Double, fileType: String) : this(id, text, fromId, toId, timestamp, time) {
-                this.fileUrl = fileUrl
-                this.fileSize = fileSize
-                this.fileType = fileType
-        }
+        const val BRUKER_COLLECTION = "brukere"
+        const val BRUKER_UID = "uid"
+        const val BRUKER_NAVN ="brukerNavn"
+        const val BRUKER_KONTAKTER = "kontakter"
+        const val BRUKER_MELDING_TOKEN = "meldingToken"
+
+
+        //Chatroom collection
+
+        const val CHATROM_COLLECTION = "chatterom"
+        const val CHATROM_UID = "chatsUid"
+        const val CHATROM_NAVN = "chatteromNavn"
+        const val CHATROM_BRUKERE = "chatromBrukere"
+        const val CHATROM_MELDINGER = "chatromMeldinger"
+        const val CHATROM_ADMIN = "admin"
+        const val CHATROM_SISTE_MELDING_TID ="sistMeldingTid"
+        const val CHATROM_SISTE_MELDING_TEXT = "sisteMeldingText"
+        const val CHATROM_GRUPPE = "gruppe"
+
+        // Sub collection av Collection-meldinger
+
+        const val MELDING_COLLECTION = "meldinger"
+        const val MELDING_UID = "meldingUid"
+        const val MELDING_TEXT = "meldingText"
+        const val MELDING_SENDT_TID = "tidspunktet"
+        const val MELDING_SENDER_UID = "senderUid"
+        const val MELDING_AVSENDER_NAVN = "avsenderNavn"
+
 }
 
-class User(val uid: String, var username: String, var profileImageUrl: String, var email: String, var token: String?) {
-        constructor() : this("","","","","")
+object GruppeLimit {
+        const val MAX_BRUKERE = 2
 }
+
+@Keep
+object ChatStartedEvent
+
+@Keep
+object FriendsChangedEvent
+
+@Keep
+object GroupsChangedEvent
+
+@Keep
+class ChatRoomChangedEvent(val chatteRomUid: String)
 
 
 

@@ -7,21 +7,21 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
-import prj.edu.bytta.innlogging.USERS
 import prj.edu.bytta.main.popupNotification
 import java.util.*
 import prj.edu.bytta.MeldingKonstanter.TAG
-import java.util.*
 import javax.inject.Inject
 
-//const val USERS = "users"
+const val USERS = "users"
 const val TRADES = "trades"
 
 @HiltViewModel
@@ -40,7 +40,7 @@ class ByttaViewModel @Inject constructor(
     val tradesFeedProgress = mutableStateOf(false)
 
     init {
-        val currentUser = auth.currentUser
+        val currentUser = Firebase.auth.currentUser
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
             getUserData(uid)
@@ -70,9 +70,6 @@ class ByttaViewModel @Inject constructor(
         }
         outState.value = newTrades
     }
-
-
-    ///////////////////////////////////////////////////////////////////////
 
     val _userName = mutableStateOf("")
     val userName: State<String> = _userName
