@@ -148,9 +148,11 @@ fun ButtonEmailPasswordLogin(
             if (user != null) {
                 navController.navigate("home_screen")
                 viewModel.getCurrentUser()
+                println("lol")
 
             } else {
                 viewModel._error.value = "Kunne ikke logge inn"
+                println("lel")
             }
         }
     )

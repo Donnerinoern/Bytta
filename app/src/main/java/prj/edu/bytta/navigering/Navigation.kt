@@ -68,7 +68,23 @@ fun Navigation() {
                 }
             )
 
+        composable(
+            "chat_page", content = { ChatPage()
+            }
+        )
+        composable(
+            "message_view", content = { MessageView(
+                navController = navController,
+            )
+            }
+        )
+            composable(
+                "new_trade", content = { NewTradeContent(
+                    navController = navController,
+                    vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
+                )})
 })
+
 }
 
 

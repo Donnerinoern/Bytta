@@ -22,7 +22,6 @@ import prj.edu.bytta.chat.MeldingKonstanter.TAG
 import prj.edu.bytta.innlogging.LoginViewModel
 import java.util.*
 import javax.inject.Inject
-import kotlin.text.Typography.dagger
 
 const val USERS = "users"
 const val TRADES = "trades"
@@ -73,7 +72,6 @@ class ByttaViewModel @Inject constructor(
         }
         outState.value = newTrades
     }
-
 
     val _userName = mutableStateOf("")
     val userName: State<String> = _userName
@@ -166,6 +164,7 @@ class ByttaViewModel @Inject constructor(
     fun uploadTrade(uri: Uri, body: String, item: String, viewModel: LoginViewModel) {
         inProgress.value = true
 
+
         val storageRef = storage.reference
         val uuid = UUID.randomUUID()
         val imageRef = storageRef.child("images/$uuid")
@@ -178,6 +177,7 @@ class ByttaViewModel @Inject constructor(
             .addOnFailureListener{exc ->
                 inProgress.value = false
             }
+        val vm: LoginViewModel = LoginViewModel()
         val tradeData = TradeData(body, item, viewModel.getCurrentUser()?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
         db.collection("trades")
             .add(tradeData)
