@@ -25,6 +25,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import prj.edu.bytta.innlogging.Login
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonProgressSpinner
 
@@ -80,8 +81,10 @@ fun Content(
                 Button (
                     content = { Text(text = stringResource(R.string.loggut))},
                     onClick = {
-                        navController.navigate("login_screen")
+                        //navController.navigate("login_screen")
+                        val intent = Intent(context, Login::class.java)
                         viewModel.signOut()
+                        context.startActivity(intent)
                     }
                 )
                 Button (
