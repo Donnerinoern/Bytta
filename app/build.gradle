@@ -70,9 +70,6 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation "androidx.compose.runtime:runtime-livedata:1.4.0-alpha02"
 
-    //EventBus
-    implementation 'org.greenrobot:eventbus:3.3.1'
-
     // Hilt
     implementation "com.google.dagger:hilt-android:2.38.1"
 
@@ -104,6 +101,6 @@ dependencies {
     kapt "com.google.dagger:hilt-android-compiler:2.38.1"
     implementation 'com.google.firebase:firebase-auth:21.1.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
-    implementation 'com.google.firebase:firebase-storage:20.1.0'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-messaging:23.1.0'
 }

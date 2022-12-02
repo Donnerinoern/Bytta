@@ -120,7 +120,6 @@ class LoginViewModel : ComponentActivity() {
 
       val profileUpdates = userProfileChangeRequest {
           displayName = userName.value
-          photoUri = Uri.parse(imageUrl)
       }
       user!!.updateProfile(profileUpdates)
           .addOnCompleteListener { task ->

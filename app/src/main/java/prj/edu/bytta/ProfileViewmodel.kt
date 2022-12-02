@@ -15,23 +15,11 @@ import com.google.firebase.ktx.Firebase
 
 
 class ProfileViewmodel : ComponentActivity() {
-    val _password = mutableStateOf("")
-    val password: State<String> = _password
-    val _userEmail = mutableStateOf("")
-    val userEmail: State<String> = _userEmail
     val _newName = mutableStateOf("")
     val newName: State<String> = _newName
 
 
     // Setters
-    fun setUserEmail(email: String) {
-        _userEmail.value = email
-    }
-
-    fun setPassword(password: String) {
-        _password.value = password
-    }
-
     fun setNewName(newname: String) {
         _newName.value = newname
     }
@@ -52,7 +40,7 @@ class ProfileViewmodel : ComponentActivity() {
     }
 
 
-    fun updateProfile() {
+    fun updateUserName() {
 
         val user = Firebase.auth.currentUser
 

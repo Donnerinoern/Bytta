@@ -38,6 +38,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.R
 import prj.edu.bytta.innlogging.LoginViewModel
@@ -62,8 +63,7 @@ class MinePosts : ComponentActivity() {
                 ) {
                     MinePostsScreen(
                         viewModel = LoginViewModel(),
-                        navController = NavController(context = LocalContext.current)
-                        viewModel = ByttaViewModel(
+                        vm = ByttaViewModel(
                             auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
 
                         )
@@ -77,9 +77,7 @@ class MinePosts : ComponentActivity() {
 
     @Composable
     fun MinePostsScreen( vm: ByttaViewModel, viewModel: LoginViewModel) {
-        val userName = viewModel.userName.value
         val userData = viewModel.userData.value
-        val isLoading = viewModel.inProgress.value
         val context = LocalContext.current
         val user = Firebase.auth.currentUser
 
@@ -98,14 +96,6 @@ class MinePosts : ComponentActivity() {
                     ProfileImage(userData?.imageUrl) {
 
                     }
-
-                    Text(
-                        text = "15\ntrades",
-                        modifier = Modifier
-                            .weight(1f)
-                            .align(Alignment.CenterVertically),
-                        textAlign = TextAlign.Justify
-                    )
 
                     IconButton(
                         modifier = Modifier
@@ -155,12 +145,6 @@ class MinePosts : ComponentActivity() {
                     Text(text = "Rediger profil")
                 }
 
-                OutlinedButton(
-                    onClick = { navController.navigate("new_post") },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(10)
                 CommonDivider()
 
                 Column(modifier = Modifier.weight(1f)) {

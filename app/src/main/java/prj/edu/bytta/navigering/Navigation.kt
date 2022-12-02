@@ -1,13 +1,13 @@
 package prj.edu.bytta.navigering
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.chat.ChatPage
 import prj.edu.bytta.chat.MessageView
@@ -51,7 +51,7 @@ fun Navigation(){
          composable(
              "home_screen", content = { Content(
             navController = navController,
-            vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance()),
+            vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), Firebase.storage),
             viewModel = LoginViewModel()
 
         )

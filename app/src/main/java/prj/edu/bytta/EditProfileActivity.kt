@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonDivider
 import prj.edu.bytta.main.CommonImage
@@ -51,12 +52,10 @@ class EditProfileActivity : ComponentActivity() {
 
                     ProfileScreen(
                         viewModel = LoginViewModel(),
-                            vieWmodel = ProfileViewmodel()
-
-                        viewModel = ByttaViewModel(
-                        auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
+                        vieWmodel = ProfileViewmodel(),
+                        vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), Firebase.storage)
                         )
-                    )
+
 
                 }
             }
@@ -67,10 +66,11 @@ class EditProfileActivity : ComponentActivity() {
 @Composable
 fun ProfileScreen(
     viewModel: LoginViewModel,
-    vieWmodel: ProfileViewmodel
+    vieWmodel: ProfileViewmodel,
+    vm: ByttaViewModel
 ) {
 
-    val isLoading = viewModel.inProgress.value
+    val isLoading = vm.inProgress.value
     if (isLoading) {
         CommonProgressSpinner()
     } else {
@@ -81,7 +81,7 @@ fun ProfileScreen(
         ProfileContent(
             viewModel = LoginViewModel(),
             vieWmodel = ProfileViewmodel(),
-            onSave = { vieWmodel.updateProfile() },
+            onSave = { vieWmodel.updateUserName() },
             onBack = {
                 val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
@@ -127,7 +127,7 @@ fun ProfileContent(
 
         CommonDivider()
 
-        ProfileImage(imageUrl = imageUrl, viewModel = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage))
+        ProfileImage(imageUrl = imageUrl, vm = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage))
 
         CommonDivider()
 
@@ -152,29 +152,19 @@ fun ProfileContent(
                 shape = RoundedCornerShape(8.dp),
             )
         }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp),
-            horizontalArrangement = Arrangement.Center
-
-        ) {
-            Text(text = "Logg ut", modifier = Modifier.clickable { onLogout.invoke() })
-        }
     }
 }
 
 // Kode som viser redigering av profilbilde
 
 @Composable
-fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {
+fun ProfileImage(imageUrl: String?, vm: ByttaViewModel) {
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ){uri: Uri? ->
 
-        uri?.let { viewModel.uploadProfileImage(uri) }
+        uri?.let { vm.uploadProfileImage(uri) }
     }
 
     Box(modifier = Modifier.height(IntrinsicSize.Min)) {
@@ -196,7 +186,7 @@ fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {
             Text(text = "Endre profilbilde")
         }
 
-        val isLoading = viewModel.inProgress.value
+        val isLoading = vm.inProgress.value
         if (isLoading)
             CommonProgressSpinner()
     }
