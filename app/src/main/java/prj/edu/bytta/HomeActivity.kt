@@ -39,12 +39,6 @@ class HomeActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                // A surface container using the 'background' color from the theme
-                /*Surface(
-                    modifier = Modifier.fillMaxSize()
-                    //color = MaterialTheme.colorScheme.background
-                ) {
-                }*/
                 Content(
                     ByttaViewModel(
                         Firebase.auth,
@@ -112,12 +106,6 @@ fun TradesList(tradeList: List<TradeData>, loading: Boolean, vm: ByttaViewModel,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TradeCard(trade: TradeData, storage: FirebaseStorage) {
-    /*val storageRef = storage.reference
-    var uri: Uri? = null
-    storageRef.child("images/${trade.imageURI}").downloadUrl.addOnSuccessListener {
-        image ->
-        uri = image
-    }*/
     Spacer(modifier = Modifier.height(5.dp))
     Card(
         modifier = Modifier.fillMaxWidth(),

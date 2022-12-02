@@ -175,7 +175,6 @@ class ByttaViewModel @Inject constructor(
             .addOnFailureListener{exc ->
                 inProgress.value = false
             }
-        val vm: LoginViewModel = LoginViewModel()
         val tradeData = TradeData(body, item, Firebase.auth.currentUser?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
         db.collection("trades")
             .add(tradeData)
