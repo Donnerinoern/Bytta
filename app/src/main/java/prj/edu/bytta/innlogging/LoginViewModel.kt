@@ -22,6 +22,7 @@ import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.HomeActivity
@@ -123,13 +124,13 @@ class LoginViewModel : ComponentActivity() {
 
     //Autorisering i Firebase holder kun email og passord.
     // Denne funksjonen gir en bruker et brukernavn evt bilde
-  fun updateProfile() {
+  fun updateProfile(imageUrl: String? = null) {
 
       val user = Firebase.auth.currentUser
 
       val profileUpdates = userProfileChangeRequest {
           displayName = userName.value
-          photoUri = Uri.parse("")
+          photoUri = Uri.parse(imageUrl)
       }
       user!!.updateProfile(profileUpdates)
           .addOnCompleteListener { task ->
@@ -138,13 +139,6 @@ class LoginViewModel : ComponentActivity() {
               }
           }
   }
-
-    private fun handleException(exception: Exception? = null, customMessage: String = ""){
-                    exception?.printStackTrace()
-                    val errorMessage = exception?.localizedMessage ?: ""
-                    val message = if ( customMessage.isEmpty()) errorMessage else "$customMessage: $errorMessage"
-                    popupNotification.value = Event(message)
-                }
 
     @Composable
     fun ErrorField() {
@@ -156,7 +150,6 @@ class LoginViewModel : ComponentActivity() {
             fontWeight = FontWeight.Bold
         )
     }
-
 
     fun reload() {
 

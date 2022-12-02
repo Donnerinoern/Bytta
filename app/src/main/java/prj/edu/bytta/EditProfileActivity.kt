@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import prj.edu.bytta.innlogging.LoginViewModel
@@ -51,15 +52,16 @@ class EditProfileActivity : ComponentActivity() {
         setContent {
             ByttaTheme {
                 // A surface container using the 'background' color from the theme
-                Column(
+                Surface(
                     modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                   // horizontalAlignment = Alignment.CenterHorizontally,
+                    color = MaterialTheme.colorScheme.background
 
                     ) {
 
                     ProfileScreen(
-                        viewModel = LoginViewModel(
-
+                        viewModel = ByttaViewModel(
+                        auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage
                         )
                     )
 
@@ -70,22 +72,18 @@ class EditProfileActivity : ComponentActivity() {
 }
 
 @Composable
-fun ProfileScreen(viewModel: LoginViewModel ) {
+fun ProfileScreen(viewModel: ByttaViewModel) {
     val isLoading = viewModel.inProgress.value
     if (isLoading) {
         CommonProgressSpinner()
     } else {
+
         val userData = viewModel.userData.value
-        var username by rememberSaveable { mutableStateOf(userData?.username ?: "") }
 
         val context = LocalContext.current
         ProfileContent(
-            viewModel = LoginViewModel(
-
-            ),
-            username = username,
-            onUsernameChange = { username = it },
-            onSave = { viewModel.updateProfile() },
+            viewModel = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage),
+            onSave = { },
             onBack = {
                 val intent = Intent(context, MinePosts::class.java)
                 context.startActivity(intent)
@@ -101,9 +99,7 @@ fun ProfileScreen(viewModel: LoginViewModel ) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileContent(
-    viewModel: LoginViewModel,
-    username: String,
-    onUsernameChange: (String) -> Unit,
+    viewModel: ByttaViewModel,
     onSave: () -> Unit,
     onBack: () -> Unit,
     onLogout: () -> Unit
@@ -112,6 +108,8 @@ fun ProfileContent(
     val scrollState = rememberScrollState()
     val imageUrl = viewModel.userData.value?.imageUrl
     val userName = viewModel.userName.value
+
+
 
     Column(
         modifier = Modifier
@@ -130,7 +128,7 @@ fun ProfileContent(
 
         CommonDivider()
 
-        ProfileImage(imageUrl = imageUrl, viewModel = LoginViewModel())
+        ProfileImage(imageUrl = imageUrl, viewModel = ByttaViewModel(auth = Firebase.auth, db = Firebase.firestore, storage = Firebase.storage))
 
         CommonDivider()
 
@@ -141,10 +139,12 @@ fun ProfileContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Brukernavn", modifier = Modifier.width(100.dp))
+
+
             OutlinedTextField(
                 value = userName,
+                onValueChange = { },
                 label = { Text(text = stringResource(R.string.username)) },
-                onValueChange = { viewModel.setUserName(it) },
                 colors = TextFieldDefaults.textFieldColors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
@@ -165,15 +165,16 @@ fun ProfileContent(
     }
 }
 
+// Kode som viser redigering av profilbilde
 
 @Composable
-fun ProfileImage(imageUrl: String?, viewModel: LoginViewModel) {
+fun ProfileImage(imageUrl: String?, viewModel: ByttaViewModel) {
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
     ){uri: Uri? ->
 
-        uri?.let {  }
+        uri?.let { viewModel.uploadProfileImage(uri) }
     }
 
     Box(modifier = Modifier.height(IntrinsicSize.Min)) {

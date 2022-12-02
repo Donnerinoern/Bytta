@@ -8,6 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import prj.edu.bytta.*
 import prj.edu.bytta.innlogging.LoginScreen
 import prj.edu.bytta.innlogging.LoginViewModel
@@ -29,7 +30,7 @@ fun Navigation(){
         startDestination = "login_screen",
         builder = {
 
-            composable(
+        composable(
             "login_screen", content = { LoginScreen(
             navController = navController,
             viewModel = LoginViewModel()
@@ -51,7 +52,6 @@ fun Navigation(){
                 navController = navController,
                 vm = ByttaViewModel(Firebase.auth, FirebaseFirestore.getInstance(), FirebaseStorage.getInstance()),
                         viewModel = LoginViewModel()
-
             )
             })
             composable(
