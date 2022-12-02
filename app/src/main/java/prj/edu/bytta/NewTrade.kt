@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import prj.edu.bytta.innlogging.LoginViewModel
 import prj.edu.bytta.main.CommonImage
 import prj.edu.bytta.main.NotificationMessage
 import prj.edu.bytta.navigering.Navigation
@@ -46,7 +47,8 @@ class NewTrade: ComponentActivity() {
                         ByttaViewModel(
                             FirebaseAuth.getInstance(),
                             FirebaseFirestore.getInstance(),
-                            FirebaseStorage.getInstance())
+                            FirebaseStorage.getInstance()),
+                            viewModel = LoginViewModel()
                         )
                 }
             }
@@ -56,7 +58,7 @@ class NewTrade: ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewTradeContent(navController: NavController, vm: ByttaViewModel) {
+fun NewTradeContent(navController: NavController, vm: ByttaViewModel, viewModel: LoginViewModel) {
     var itemDesc by remember{ mutableStateOf(TextFieldValue("")) }
     var itemText by remember{ mutableStateOf(TextFieldValue("")) }
 
@@ -65,7 +67,7 @@ fun NewTradeContent(navController: NavController, vm: ByttaViewModel) {
             contract = ActivityResultContracts.GetContent(),
         ){ uri: Uri? ->
 
-            uri?.let { vm.uploadTrade(uri, itemDesc.text, itemText.text) }
+            uri?.let { vm.uploadTrade(uri, itemDesc.text, itemText.text, viewModel) }
         }
 
         Box(modifier = Modifier.height(IntrinsicSize.Min)) {

@@ -18,7 +18,8 @@ import prj.edu.bytta.data.Event
 import prj.edu.bytta.data.UserData
 import prj.edu.bytta.main.popupNotification
 import java.util.*
-import prj.edu.bytta.MeldingKonstanter.TAG
+import prj.edu.bytta.chat.MeldingKonstanter.TAG
+import prj.edu.bytta.innlogging.LoginViewModel
 import java.util.*
 import javax.inject.Inject
 
@@ -161,7 +162,7 @@ class ByttaViewModel @Inject constructor(
         }
     }
 
-    fun uploadTrade(uri: Uri, body: String, item: String) {
+    fun uploadTrade(uri: Uri, body: String, item: String, viewModel: LoginViewModel) {
         inProgress.value = true
 
         val storageRef = storage.reference
@@ -176,7 +177,7 @@ class ByttaViewModel @Inject constructor(
             .addOnFailureListener{exc ->
                 inProgress.value = false
             }
-        val tradeData = TradeData(body, item, getCurrentUser()?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
+        val tradeData = TradeData(body, item, viewModel.getCurrentUser()?.displayName, "https://firebasestorage.googleapis.com/v0/b/byttamob.appspot.com/o/images%2F${uuid}?alt=media")
         db.collection("trades")
             .add(tradeData)
             .addOnSuccessListener { documentReference ->
